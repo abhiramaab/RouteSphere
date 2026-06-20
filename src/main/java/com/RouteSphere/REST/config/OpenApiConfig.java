@@ -12,6 +12,7 @@ public class OpenApiConfig {
     public OpenAPI RouteSphereAPI(){
         return new OpenAPI()
                 .info(new Info().title("RouteSphereAPI")
+                      .addServersItem(new Server().url("https://project.routesphere.abhiram.tech"))
                         .description("RouteSphere is a RESTful backend application developed using Spring Boot for logistics and fleet management operations.")
                         .version("1.6"));
 
