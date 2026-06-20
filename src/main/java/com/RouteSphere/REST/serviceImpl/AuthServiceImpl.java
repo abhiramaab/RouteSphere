@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
         if (!matches) {
             throw new RuntimeException("Wrong password");
         }
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getEmail());
         return new AuthResponse(token);
     }
 }
