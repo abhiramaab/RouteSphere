@@ -8,31 +8,40 @@ RouteSphere is a RESTful backend application developed using Spring Boot for log
 
 # Technology Stack
 
-* Java 21
-* Spring Boot
-* Spring Security
-* Spring Data JPA
-* Hibernate
-* MySQL
-* Maven
-* Swagger / OpenAPI
+- Java 21
+- Spring Boot 3
+- Spring Security
+- Spring Data JPA
+- Hibernate
+- MySQL
+- Maven
+- JWT Authentication
+- Swagger / OpenAPI
+- Resend Email API
+- Lombok
+- SLF4J + Logback
 
 ---
 
 # Features
 
-* JWT Authentication
-* Role-Based Authorization
-* Customer Management
-* Driver Management
-* Vehicle Management
-* Shipment Management
-* Trip Management
-* Invoice Management
-* Fuel Log Management
-* Vehicle Maintenance Management
-* Global Exception Handling
-* Swagger API Documentation
+# Features
+
+- JWT Authentication
+- Role-Based Authorization
+- Customer Management
+- Driver Management
+- Vehicle Management
+- Shipment Management
+- Trip Management
+- Invoice Management
+- Fuel Log Management
+- Vehicle Maintenance Management
+- Automated Shipment Email Notifications
+- Automated Payment Confirmation Emails
+- Logging using SLF4J & Logback
+- Global Exception Handling
+- Swagger API Documentation
 
 ---
 
@@ -47,6 +56,7 @@ src/main/java/com/RouteSphere/REST/
 ├── config/
 │   ├── OpenApiConfig.java
 │   ├── PasswordConfig.java
+|   ├── ResendConfig.java
 │   ├── SecurityConfig.java
 │   └── SwaggerSecurityConfig.java
 │
@@ -136,6 +146,7 @@ src/main/java/com/RouteSphere/REST/
 │   ├── AuthService.java
 │   ├── CustomerService.java
 │   ├── DriverService.java
+|   ├── EmailService.java
 │   ├── FuelLogService.java
 │   ├── InvoiceService.java
 │   ├── MaintenanceService.java
@@ -148,6 +159,7 @@ src/main/java/com/RouteSphere/REST/
 │   ├── AuthServiceImpl.java
 │   ├── CustomerServiceImpl.java
 │   ├── DriverServiceImpl.java
+|   ├── EmailServiceImpl.java
 │   ├── FuelLogServiceImpl.java
 │   ├── InvoiceServiceImpl.java
 │   ├── MaintenanceServiceImpl.java
@@ -209,6 +221,32 @@ Roles are assigned at registration and embedded in the token.
 - Swagger UI is publicly accessible at `/v3/api/**` and `/swagger-ui/index.html`
 - Passwords are hashed using `PasswordConfig` (BCrypt)
 ---
+
+# Application Architecture
+
+```
+Client
+   │
+   ▼
+Controllers
+   │
+   ▼
+Services
+   │
+   ▼
+Repositories
+   │
+   ▼
+MySQL Database
+
+             │
+             ▼
+      Email Service (Resend)
+
+             │
+             ▼
+        Customer Email
+```
 
 # Business Workflow
 
@@ -356,6 +394,29 @@ Vehicle
     │
     └── Many Vehicles → One Maintenance Record
 ```
+## Email Notifications
+
+The application automatically sends transactional emails using the Resend Email API.
+
+### Shipment Created
+
+When a shipment is created:
+
+- Shipment details are saved
+- Customer email is retrieved
+- Shipment confirmation email is sent
+
+### Shipment Delivered
+
+When a shipment is marked as delivered:
+
+- Customer receives a delivery confirmation email
+
+### Payment Successful
+
+When an invoice payment is completed:
+
+- Customer receives a payment confirmation email
 
 ---
 
@@ -500,22 +561,49 @@ FAILED
 
 # Security
 
-* JWT Authentication
-* BCrypt Password Encoding
-* Stateless Session Management
-* Role-Based Authorization
-* Swagger Integration for API Testing
+- JWT Authentication
+- BCrypt Password Encoding
+- Stateless Session Management
+- Role-Based Authorization
+- Request Validation
+- Global Exception Handling
+- Swagger/OpenAPI Documentation
+
+---
+
+# Logging
+
+The application uses SLF4J with Logback for centralized logging.
+
+Logs include:
+
+- User authentication
+- Customer operations
+- Driver operations
+- Vehicle operations
+- Shipment lifecycle
+- Invoice processing
+- Fuel log operations
+- Maintenance records
+- Email delivery status
 
 ---
 
 # Future Scope
 
-* Driver availability scheduling
-* Route optimization
-* GPS integration
-* Dashboard analytics
-* Audit logging
-* Docker deployment
-* Cloud deployment
-* Microservice migration
-* Notification service integration
+- Driver availability scheduling
+- Live shipment tracking
+- GPS integration
+- Route optimization
+- Dashboard analytics
+- Audit logging
+- Kubernetes deployment
+- AWS cloud deployment
+- Redis caching
+- RabbitMQ / Kafka messaging
+- SMS integration
+- Push notifications
+
+---
+
+
