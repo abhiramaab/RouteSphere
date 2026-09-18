@@ -13,9 +13,10 @@ import { Trip } from '../types';
 interface LiveRouteMapProps {
   trips: Trip[];
   onSelectTrip?: (trip: Trip) => void;
+  onOpenDispatch?: () => void;
 }
 
-export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ trips, onSelectTrip }) => {
+export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ trips, onSelectTrip, onOpenDispatch }) => {
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5 backdrop-blur-sm">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
@@ -28,9 +29,20 @@ export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ trips, onSelectTrip 
             Real-time fleet GPS tracking across primary national freight corridors
           </p>
         </div>
-        <span className="self-start sm:self-center rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-400 border border-emerald-500/20">
-          ● 3 Trips En Route
-        </span>
+        <div className="flex items-center gap-2 self-start sm:self-center">
+          {onOpenDispatch && (
+            <button
+              onClick={onOpenDispatch}
+              className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1 text-xs font-semibold text-white shadow-md shadow-indigo-600/30 hover:bg-indigo-500 transition-all"
+            >
+              <span className="text-sm font-bold">+</span>
+              <span>Dispatch Trip</span>
+            </button>
+          )}
+          <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-400 border border-emerald-500/20">
+            ● {trips.length} Trips Active
+          </span>
+        </div>
       </div>
 
       {/* Corridors Grid */}

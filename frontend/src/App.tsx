@@ -8,6 +8,8 @@ import { FleetGrid } from './components/FleetGrid';
 import { DriverList } from './components/DriverList';
 import { InvoiceList } from './components/InvoiceList';
 import { TripDispatchModal } from './components/TripDispatchModal';
+import { CreateDriverModal } from './components/CreateDriverModal';
+import { CreateVehicleModal } from './components/CreateVehicleModal';
 import { ArchitectureModal } from './components/ArchitectureModal';
 import { RouteSphereApi } from './api';
 import { 
@@ -31,6 +33,9 @@ export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<NavTab>('overview');
   const [isDemoMode, setIsDemoMode] = useState<boolean>(true);
   const [showArchModal, setShowArchModal] = useState<boolean>(false);
+  const [showCreateDriverModal, setShowCreateDriverModal] = useState<boolean>(false);
+  const [showCreateVehicleModal, setShowCreateVehicleModal] = useState<boolean>(false);
+  const [showCreateShipmentModal, setShowCreateShipmentModal] = useState<boolean>(false);
 
   // Core domain state
   const [metrics, setMetrics] = useState<LogisticsMetrics>(INITIAL_METRICS);
@@ -81,6 +86,29 @@ export const App: React.FC = () => {
       activeShipments: prev.activeShipments + 1,
       pendingDeliveries: prev.pendingDeliveries + 1,
     }));
+    setShowCreateShipmentModal(false);
+  };
+
+  const handleCreateDriver = async (data: {
+    fullName: string;
+    phone: string;
+    licenseNumber: string;
+    experienceYears?: number;
+  }) => {
+    const created = await RouteSphereApi.createDriver(data);
+    setDrivers((prev) => [created, ...prev]);
+    setShowCreateDriverModal(false);
+  };
+
+  const handleCreateVehicle = async (data: {
+    plateNumber: string;
+    model: string;
+    capacityKg: number;
+    type: 'TRUCK' | 'VAN' | 'SEMI_TRUCK';
+  }) => {
+    const created = await RouteSphereApi.createVehicle(data);
+    setVehicles((prev) => [created, ...prev]);
+    setShowCreateVehicleModal(false);
   };
 
   const handleDispatchTrip = async (data: {
@@ -105,6 +133,13 @@ export const App: React.FC = () => {
     setCurrentTab('trips');
   };
 
+  const handleTriggerQuickDispatch = () => {
+    const pending = shipments.find((s) => s.status === 'PENDING') || shipments[0];
+    if (pending) {
+      setSelectedShipmentForDispatch(pending);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       {/* Top Navbar */}
@@ -112,6 +147,10 @@ export const App: React.FC = () => {
         onOpenArchitecture={() => setShowArchModal(true)}
         isDemoMode={isDemoMode}
         onToggleDemoMode={handleToggleDemoMode}
+        onOpenCreateShipment={() => setShowCreateShipmentModal(true)}
+        onOpenCreateDriver={() => setShowCreateDriverModal(true)}
+        onOpenCreateVehicle={() => setShowCreateVehicleModal(true)}
+        onOpenDispatch={handleTriggerQuickDispatch}
       />
 
       <div className="flex flex-1">
@@ -134,12 +173,15 @@ export const App: React.FC = () => {
               <LiveRouteMap
                 trips={trips}
                 onSelectTrip={() => setCurrentTab('trips')}
+                onOpenDispatch={handleTriggerQuickDispatch}
               />
 
               <ShipmentTable
                 shipments={shipments}
                 onCreateShipment={handleCreateShipment}
                 onDispatchTrip={(s) => setSelectedShipmentForDispatch(s)}
+                forceOpenModal={showCreateShipmentModal}
+                onCloseModal={() => setShowCreateShipmentModal(false)}
               />
             </div>
           )}
@@ -151,6 +193,8 @@ export const App: React.FC = () => {
                 shipments={shipments}
                 onCreateShipment={handleCreateShipment}
                 onDispatchTrip={(s) => setSelectedShipmentForDispatch(s)}
+                forceOpenModal={showCreateShipmentModal}
+                onCloseModal={() => setShowCreateShipmentModal(false)}
               />
             </div>
           )}
@@ -158,21 +202,30 @@ export const App: React.FC = () => {
           {/* Trips & Dispatch Tab */}
           {currentTab === 'trips' && (
             <div className="space-y-6">
-              <LiveRouteMap trips={trips} />
+              <LiveRouteMap 
+                trips={trips} 
+                onOpenDispatch={handleTriggerQuickDispatch}
+              />
             </div>
           )}
 
           {/* Fleet & Vehicles Tab */}
           {currentTab === 'fleet' && (
             <div className="space-y-6">
-              <FleetGrid vehicles={vehicles} />
+              <FleetGrid 
+                vehicles={vehicles} 
+                onOpenCreateVehicle={() => setShowCreateVehicleModal(true)}
+              />
             </div>
           )}
 
           {/* Drivers Tab */}
           {currentTab === 'drivers' && (
             <div className="space-y-6">
-              <DriverList drivers={drivers} />
+              <DriverList 
+                drivers={drivers} 
+                onOpenCreateDriver={() => setShowCreateDriverModal(true)}
+              />
             </div>
           )}
 
@@ -193,6 +246,22 @@ export const App: React.FC = () => {
           vehicles={vehicles}
           onClose={() => setSelectedShipmentForDispatch(null)}
           onConfirmDispatch={handleDispatchTrip}
+        />
+      )}
+
+      {/* Create Driver Modal */}
+      {showCreateDriverModal && (
+        <CreateDriverModal
+          onClose={() => setShowCreateDriverModal(false)}
+          onSubmit={handleCreateDriver}
+        />
+      )}
+
+      {/* Create Vehicle Modal */}
+      {showCreateVehicleModal && (
+        <CreateVehicleModal
+          onClose={() => setShowCreateVehicleModal(false)}
+          onSubmit={handleCreateVehicle}
         />
       )}
 

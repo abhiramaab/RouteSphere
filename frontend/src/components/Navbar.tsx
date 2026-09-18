@@ -14,14 +14,23 @@ interface NavbarProps {
   onOpenArchitecture: () => void;
   isDemoMode: boolean;
   onToggleDemoMode: (val: boolean) => void;
+  onOpenCreateShipment: () => void;
+  onOpenCreateDriver: () => void;
+  onOpenCreateVehicle: () => void;
+  onOpenDispatch: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
   onOpenArchitecture, 
   isDemoMode, 
-  onToggleDemoMode 
+  onToggleDemoMode,
+  onOpenCreateShipment,
+  onOpenCreateDriver,
+  onOpenCreateVehicle,
+  onOpenDispatch
 }) => {
   const [showConfig, setShowConfig] = useState(false);
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
   const [apiUrl, setApiUrl] = useState(RouteSphereApi.getApiUrl());
 
   const handleSaveConfig = () => {
@@ -73,6 +82,65 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Quick Create Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowCreateMenu(!showCreateMenu)}
+              className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition-all"
+            >
+              <span className="text-base leading-none font-black">+</span>
+              <span>Create / Dispatch</span>
+            </button>
+
+            {showCreateMenu && (
+              <div className="absolute right-0 top-11 w-56 rounded-2xl border border-slate-800 bg-slate-900 p-2 shadow-2xl z-50">
+                <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-800 mb-1">
+                  Direct REST Actions
+                </div>
+                <button
+                  onClick={() => { setShowCreateMenu(false); onOpenCreateShipment(); }}
+                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-indigo-600 hover:text-white transition-colors"
+                >
+                  <span>📦</span>
+                  <div className="text-left">
+                    <div>New Shipment</div>
+                    <div className="text-[10px] opacity-70 font-mono">POST /api/shipments</div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setShowCreateMenu(false); onOpenDispatch(); }}
+                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-indigo-600 hover:text-white transition-colors"
+                >
+                  <span>🚀</span>
+                  <div className="text-left">
+                    <div>Dispatch Trip</div>
+                    <div className="text-[10px] opacity-70 font-mono">POST /api/trips</div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setShowCreateMenu(false); onOpenCreateVehicle(); }}
+                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-indigo-600 hover:text-white transition-colors"
+                >
+                  <span>🚚</span>
+                  <div className="text-left">
+                    <div>Register Vehicle</div>
+                    <div className="text-[10px] opacity-70 font-mono">POST /api/vehicles</div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setShowCreateMenu(false); onOpenCreateDriver(); }}
+                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-indigo-600 hover:text-white transition-colors"
+                >
+                  <span>👤</span>
+                  <div className="text-left">
+                    <div>Onboard Driver</div>
+                    <div className="text-[10px] opacity-70 font-mono">POST /api/drivers</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
+
           <button
             onClick={onOpenArchitecture}
             className="flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 transition-all shadow-sm"

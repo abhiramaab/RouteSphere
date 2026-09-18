@@ -15,16 +15,22 @@ interface ShipmentTableProps {
   shipments: Shipment[];
   onCreateShipment: (shipment: Partial<Shipment>) => void;
   onDispatchTrip?: (shipment: Shipment) => void;
+  forceOpenModal?: boolean;
+  onCloseModal?: () => void;
 }
 
 export const ShipmentTable: React.FC<ShipmentTableProps> = ({
   shipments,
   onCreateShipment,
   onDispatchTrip,
+  forceOpenModal,
+  onCloseModal,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const modalActive = forceOpenModal || isModalOpen;
 
   // Form State
   const [origin, setOrigin] = useState('Bengaluru Hub');
@@ -199,16 +205,19 @@ export const ShipmentTable: React.FC<ShipmentTableProps> = ({
       </div>
 
       {/* New Shipment Modal */}
-      {isModalOpen && (
+      {modalActive && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
             <h3 className="text-base font-bold text-white mb-1 flex items-center gap-2">
               <Package className="h-5 w-5 text-indigo-400" />
               Register New Freight Shipment
             </h3>
-            <p className="text-xs text-slate-400 mb-4">
-              Dispatches directly into Spring Boot ShipmentController POST /api/shipments
+            <p className="text-xs text-slate-400 mb-3">
+              Directly invokes Spring Boot ShipmentController
             </p>
+            <div className="rounded-xl bg-indigo-950/20 border border-indigo-500/20 p-2.5 mb-4 text-[11px] font-mono text-indigo-300">
+              Endpoint: POST /api/shipments
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-3.5">
               <div>
@@ -273,7 +282,7 @@ export const ShipmentTable: React.FC<ShipmentTableProps> = ({
               <div className="mt-6 flex justify-end gap-2 pt-2">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => { setIsModalOpen(false); onCloseModal?.(); }}
                   className="rounded-xl border border-slate-800 bg-slate-800/80 px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-800"
                 >
                   Cancel

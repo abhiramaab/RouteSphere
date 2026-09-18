@@ -11,9 +11,10 @@ import { Vehicle } from '../types';
 
 interface FleetGridProps {
   vehicles: Vehicle[];
+  onOpenCreateVehicle?: () => void;
 }
 
-export const FleetGrid: React.FC<FleetGridProps> = ({ vehicles }) => {
+export const FleetGrid: React.FC<FleetGridProps> = ({ vehicles, onOpenCreateVehicle }) => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -26,6 +27,16 @@ export const FleetGrid: React.FC<FleetGridProps> = ({ vehicles }) => {
             Real-time vehicle health, odometer telemetry, and scheduled maintenance
           </p>
         </div>
+
+        {onOpenCreateVehicle && (
+          <button
+            onClick={onOpenCreateVehicle}
+            className="flex items-center gap-1.5 self-start sm:self-center rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-indigo-600/30 hover:bg-indigo-500 transition-all"
+          >
+            <span className="text-sm font-bold">+</span>
+            <span>Register Vehicle</span>
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
