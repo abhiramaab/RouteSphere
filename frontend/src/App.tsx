@@ -1,66 +1,79 @@
-import React, { useState, useEffect } from 'react';
-import { Navbar } from './components/Navbar';
-import { Sidebar, NavTab } from './components/Sidebar';
-import { MetricsCards } from './components/MetricsCards';
-import { LiveRouteMap } from './components/LiveRouteMap';
-import { ShipmentTable } from './components/ShipmentTable';
-import { FleetGrid } from './components/FleetGrid';
-import { DriverList } from './components/DriverList';
-import { InvoiceList } from './components/InvoiceList';
-import { TripDispatchModal } from './components/TripDispatchModal';
-import { CreateDriverModal } from './components/CreateDriverModal';
-import { CreateVehicleModal } from './components/CreateVehicleModal';
-import { ArchitectureModal } from './components/ArchitectureModal';
-import { RouteSphereApi } from './api';
-import { 
-  Shipment, 
-  Driver, 
-  Vehicle, 
-  Trip, 
-  Invoice, 
-  LogisticsMetrics 
+import React, { useCallback, useEffect, useState } from 'react';
+import { RouteSphereApi, type Session } from './api';
+import {
+  Shipment,
+  Driver,
+  Vehicle,
+  Trip,
+  Invoice,
+  LogisticsMetrics,
+  Customer,
 } from './types';
-import { 
-  INITIAL_METRICS, 
-  INITIAL_SHIPMENTS, 
-  INITIAL_DRIVERS, 
-  INITIAL_VEHICLES, 
-  INITIAL_TRIPS, 
-  INITIAL_INVOICES 
+import {
+  INITIAL_METRICS,
+  INITIAL_SHIPMENTS,
+  INITIAL_DRIVERS,
+  INITIAL_VEHICLES,
+  INITIAL_TRIPS,
+  INITIAL_INVOICES,
+  INITIAL_CUSTOMERS,
 } from './mockData';
 
+import { LoginScreen } from './components/screens/LoginScreen';
+import { Sidebar, NavTab } from './components/shell/Sidebar';
+import { Topbar } from './components/shell/Topbar';
+import { OverviewScreen } from './components/screens/OverviewScreen';
+import { ShipmentsScreen } from './components/screens/ShipmentsScreen';
+import { FleetScreen } from './components/screens/FleetScreen';
+import { DriversScreen } from './components/screens/DriversScreen';
+import { TripsScreen } from './components/screens/TripsScreen';
+import { InvoicesScreen } from './components/screens/InvoicesScreen';
+
+import { CreateShipmentModal } from './components/modals/CreateShipmentModal';
+import { CreateDriverModal } from './components/modals/CreateDriverModal';
+import { CreateVehicleModal } from './components/modals/CreateVehicleModal';
+import { TripDispatchModal } from './components/modals/TripDispatchModal';
+import { ArchitectureModal } from './components/modals/ArchitectureModal';
+import { SettingsModal } from './components/modals/SettingsModal';
+import { SectionHeading } from './components/ui/atoms';
+
 export const App: React.FC = () => {
-  const [currentTab, setCurrentTab] = useState<NavTab>('overview');
-  const [isDemoMode, setIsDemoMode] = useState<boolean>(true);
-  const [showArchModal, setShowArchModal] = useState<boolean>(false);
-  const [showCreateDriverModal, setShowCreateDriverModal] = useState<boolean>(false);
-  const [showCreateVehicleModal, setShowCreateVehicleModal] = useState<boolean>(false);
-  const [showCreateShipmentModal, setShowCreateShipmentModal] = useState<boolean>(false);
+  const [session, setSession] = useState<Session | null>(RouteSphereApi.getSession());
+  const [authed, setAuthed] = useState<boolean>(RouteSphereApi.isAuthenticated() || RouteSphereApi.isDemoMode());
 
-  // Core domain state
+  const [tab, setTab] = useState<NavTab>('overview');
+  const [demoMode, setDemoMode] = useState(RouteSphereApi.isDemoMode());
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileNav, setMobileNav] = useState(false);
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const [metrics, setMetrics] = useState<LogisticsMetrics>(INITIAL_METRICS);
-  const [shipments, setShipments] = useState<Shipment[]>(INITIAL_SHIPMENTS);
-  const [drivers, setDrivers] = useState<Driver[]>(INITIAL_DRIVERS);
-  const [vehicles, setVehicles] = useState<Vehicle[]>(INITIAL_VEHICLES);
-  const [trips, setTrips] = useState<Trip[]>(INITIAL_TRIPS);
-  const [invoices, setInvoices] = useState<Invoice[]>(INITIAL_INVOICES);
+  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
 
-  // Dispatch state
-  const [selectedShipmentForDispatch, setSelectedShipmentForDispatch] = useState<Shipment | null>(null);
+  const [showShipment, setShowShipment] = useState(false);
+  const [showDriver, setShowDriver] = useState(false);
+  const [showVehicle, setShowVehicle] = useState(false);
+  const [showArch, setShowArch] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [dispatchTarget, setDispatchTarget] = useState<Shipment | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, [isDemoMode]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
+    setLoading(true);
     try {
-      const [m, s, d, v, t, i] = await Promise.all([
+      const [m, s, d, v, t, i, c] = await Promise.all([
         RouteSphereApi.getMetrics(),
         RouteSphereApi.getShipments(),
         RouteSphereApi.getDrivers(),
         RouteSphereApi.getVehicles(),
         RouteSphereApi.getTrips(),
         RouteSphereApi.getInvoices(),
+        RouteSphereApi.getCustomers(),
       ]);
       setMetrics(m);
       setShipments(s);
@@ -68,25 +81,34 @@ export const App: React.FC = () => {
       setVehicles(v);
       setTrips(t);
       setInvoices(i);
+      setCustomers(c);
     } catch (e) {
-      console.error('Error loading data, using local fallback', e);
+      console.error('Failed to load data', e);
+    } finally {
+      setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    if (authed) void loadData();
+  }, [authed, loadData, demoMode]);
+
+  const handleToggleDemoMode = (v: boolean) => {
+    setDemoMode(v);
+    RouteSphereApi.setDemoMode(v);
   };
 
-  const handleToggleDemoMode = (val: boolean) => {
-    setIsDemoMode(val);
-    RouteSphereApi.setDemoMode(val);
+  const handleLogout = () => {
+    RouteSphereApi.logout();
+    setSession(null);
+    setAuthed(false);
   };
 
   const handleCreateShipment = async (data: Partial<Shipment>) => {
     const created = await RouteSphereApi.createShipment(data);
     setShipments((prev) => [created, ...prev]);
-    setMetrics((prev) => ({
-      ...prev,
-      activeShipments: prev.activeShipments + 1,
-      pendingDeliveries: prev.pendingDeliveries + 1,
-    }));
-    setShowCreateShipmentModal(false);
+    setShowShipment(false);
+    void loadData();
   };
 
   const handleCreateDriver = async (data: {
@@ -97,179 +119,190 @@ export const App: React.FC = () => {
   }) => {
     const created = await RouteSphereApi.createDriver(data);
     setDrivers((prev) => [created, ...prev]);
-    setShowCreateDriverModal(false);
+    setShowDriver(false);
   };
 
   const handleCreateVehicle = async (data: {
     plateNumber: string;
     model: string;
     capacityKg: number;
-    type: 'TRUCK' | 'VAN' | 'SEMI_TRUCK';
+    type: 'TRUCK' | 'VAN' | 'SEMI_TRUCK' | 'TRAILER';
+    fuelType?: string;
   }) => {
     const created = await RouteSphereApi.createVehicle(data);
     setVehicles((prev) => [created, ...prev]);
-    setShowCreateVehicleModal(false);
+    setShowVehicle(false);
   };
 
-  const handleDispatchTrip = async (data: {
+  const handleDispatch = async (data: {
     shipmentId: number;
     driverId: number;
     vehicleId: number;
   }) => {
-    const newTrip = await RouteSphereApi.dispatchTrip(data);
-    setTrips((prev) => [newTrip, ...prev]);
-    
-    // Update shipment status locally
+    const trip = await RouteSphereApi.dispatchTrip(data);
+    setTrips((prev) => [trip, ...prev]);
     setShipments((prev) =>
       prev.map((s) => (s.id === data.shipmentId ? { ...s, status: 'IN_TRANSIT' } : s))
     );
-
-    // Update driver status
     setDrivers((prev) =>
       prev.map((d) => (d.id === data.driverId ? { ...d, status: 'ON_DUTY' } : d))
     );
-
-    setSelectedShipmentForDispatch(null);
-    setCurrentTab('trips');
+    setDispatchTarget(null);
+    setTab('trips');
   };
 
-  const handleTriggerQuickDispatch = () => {
-    const pending = shipments.find((s) => s.status === 'PENDING') || shipments[0];
-    if (pending) {
-      setSelectedShipmentForDispatch(pending);
-    }
+  const openDispatchFor = (s: Shipment) => setDispatchTarget(s);
+
+  const quickDispatch = () => {
+    const pending = shipments.find((s) => s.status === 'PENDING');
+    if (pending) setDispatchTarget(pending);
+    else setTab('shipments');
+  };
+
+  if (!authed) {
+    return (
+      <LoginScreen
+        onLoggedIn={() => {
+          setSession(RouteSphereApi.getSession());
+          setAuthed(true);
+        }}
+      />
+    );
+  }
+
+  const headings: Record<NavTab, { title: string; description: string }> = {
+    overview: { title: 'Operations overview', description: 'Live network health at a glance' },
+    shipments: { title: 'Shipments', description: 'Track and dispatch consignments' },
+    trips: { title: 'Trips & dispatch', description: 'Active routes and driver assignments' },
+    fleet: { title: 'Fleet', description: 'Vehicle status, capacity and utilization' },
+    drivers: { title: 'Drivers', description: 'Directory, availability and performance' },
+    invoices: { title: 'Invoices', description: 'Billing, collections and payment status' },
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-['Inter',sans-serif]">
-      {/* Top Navbar */}
-      <Navbar
-        onOpenArchitecture={() => setShowArchModal(true)}
-        isDemoMode={isDemoMode}
-        onToggleDemoMode={handleToggleDemoMode}
-        onOpenCreateShipment={() => setShowCreateShipmentModal(true)}
-        onOpenCreateDriver={() => setShowCreateDriverModal(true)}
-        onOpenCreateVehicle={() => setShowCreateVehicleModal(true)}
-        onOpenDispatch={handleTriggerQuickDispatch}
+    <div className="flex h-screen overflow-hidden bg-ink-50">
+      <Sidebar
+        currentTab={tab}
+        onSelectTab={setTab}
+        onOpenArchitecture={() => setShowArch(true)}
+        shipmentsCount={shipments.length}
+        activeTripsCount={trips.filter((t) => t.status === 'IN_PROGRESS').length}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
+        mobileOpen={mobileNav}
+        onCloseMobile={() => setMobileNav(false)}
       />
 
-      <div className="flex flex-1">
-        {/* Left Operations Sidebar */}
-        <Sidebar
-          currentTab={currentTab}
-          onSelectTab={setCurrentTab}
-          onOpenArchitecture={() => setShowArchModal(true)}
-          shipmentsCount={shipments.length}
-          activeTripsCount={trips.length}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Topbar
+          onOpenMobile={() => setMobileNav(true)}
+          onOpenCreateShipment={() => setShowShipment(true)}
+          onOpenCreateDriver={() => setShowDriver(true)}
+          onOpenCreateVehicle={() => setShowVehicle(true)}
+          onOpenDispatch={quickDispatch}
+          onOpenSettings={() => setShowSettings(true)}
+          onLogout={handleLogout}
+          session={session}
+          demoMode={demoMode}
+          onToggleDemoMode={handleToggleDemoMode}
+          query={query}
+          onQueryChange={setQuery}
         />
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl overflow-y-auto">
-          {/* Overview Tab */}
-          {currentTab === 'overview' && (
-            <div className="space-y-6">
-              <MetricsCards metrics={metrics} />
+        <main className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
+          <div className="mx-auto max-w-[1400px]">
+            <SectionHeading
+              title={headings[tab].title}
+              description={headings[tab].description}
+              action={
+                loading ? (
+                  <span className="flex items-center gap-2 text-[12px] text-ink-400">
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-ink-200 border-t-brand-500" />
+                    Syncing…
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5 text-[11.5px] font-medium text-emerald-600">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    {demoMode ? 'Demo data' : 'Live API'}
+                  </span>
+                )
+              }
+            />
 
-              <LiveRouteMap
+            {tab === 'overview' && (
+              <OverviewScreen
+                metrics={metrics}
+                shipments={shipments}
                 trips={trips}
-                onSelectTrip={() => setCurrentTab('trips')}
-                onOpenDispatch={handleTriggerQuickDispatch}
+                drivers={drivers}
+                onOpenShipment={openDispatchFor}
+                onGoToTab={setTab}
               />
-
-              <ShipmentTable
+            )}
+            {tab === 'shipments' && (
+              <ShipmentsScreen
                 shipments={shipments}
-                onCreateShipment={handleCreateShipment}
-                onDispatchTrip={(s) => setSelectedShipmentForDispatch(s)}
-                forceOpenModal={showCreateShipmentModal}
-                onCloseModal={() => setShowCreateShipmentModal(false)}
+                query={query}
+                onCreate={() => setShowShipment(true)}
+                onDispatch={openDispatchFor}
+                onRefresh={loadData}
               />
-            </div>
-          )}
-
-          {/* Shipments Tab */}
-          {currentTab === 'shipments' && (
-            <div className="space-y-6">
-              <ShipmentTable
-                shipments={shipments}
-                onCreateShipment={handleCreateShipment}
-                onDispatchTrip={(s) => setSelectedShipmentForDispatch(s)}
-                forceOpenModal={showCreateShipmentModal}
-                onCloseModal={() => setShowCreateShipmentModal(false)}
+            )}
+            {tab === 'trips' && (
+              <TripsScreen trips={trips} query={query} onDispatch={quickDispatch} />
+            )}
+            {tab === 'fleet' && (
+              <FleetScreen
+                vehicles={vehicles}
+                query={query}
+                onCreate={() => setShowVehicle(true)}
               />
-            </div>
-          )}
-
-          {/* Trips & Dispatch Tab */}
-          {currentTab === 'trips' && (
-            <div className="space-y-6">
-              <LiveRouteMap 
-                trips={trips} 
-                onOpenDispatch={handleTriggerQuickDispatch}
+            )}
+            {tab === 'drivers' && (
+              <DriversScreen
+                drivers={drivers}
+                query={query}
+                onCreate={() => setShowDriver(true)}
               />
-            </div>
-          )}
-
-          {/* Fleet & Vehicles Tab */}
-          {currentTab === 'fleet' && (
-            <div className="space-y-6">
-              <FleetGrid 
-                vehicles={vehicles} 
-                onOpenCreateVehicle={() => setShowCreateVehicleModal(true)}
-              />
-            </div>
-          )}
-
-          {/* Drivers Tab */}
-          {currentTab === 'drivers' && (
-            <div className="space-y-6">
-              <DriverList 
-                drivers={drivers} 
-                onOpenCreateDriver={() => setShowCreateDriverModal(true)}
-              />
-            </div>
-          )}
-
-          {/* Invoices & Billing Tab */}
-          {currentTab === 'invoices' && (
-            <div className="space-y-6">
-              <InvoiceList invoices={invoices} />
-            </div>
-          )}
+            )}
+            {tab === 'invoices' && <InvoicesScreen invoices={invoices} query={query} />}
+          </div>
         </main>
       </div>
 
-      {/* Dispatch Modal */}
-      {selectedShipmentForDispatch && (
-        <TripDispatchModal
-          shipment={selectedShipmentForDispatch}
-          drivers={drivers}
-          vehicles={vehicles}
-          onClose={() => setSelectedShipmentForDispatch(null)}
-          onConfirmDispatch={handleDispatchTrip}
-        />
-      )}
-
-      {/* Create Driver Modal */}
-      {showCreateDriverModal && (
-        <CreateDriverModal
-          onClose={() => setShowCreateDriverModal(false)}
-          onSubmit={handleCreateDriver}
-        />
-      )}
-
-      {/* Create Vehicle Modal */}
-      {showCreateVehicleModal && (
-        <CreateVehicleModal
-          onClose={() => setShowCreateVehicleModal(false)}
-          onSubmit={handleCreateVehicle}
-        />
-      )}
-
-      {/* Architecture Modal */}
-      {showArchModal && (
-        <ArchitectureModal onClose={() => setShowArchModal(false)} />
-      )}
+      <CreateShipmentModal
+        open={showShipment}
+        onClose={() => setShowShipment(false)}
+        onSubmit={handleCreateShipment}
+        customers={customers}
+      />
+      <CreateDriverModal
+        open={showDriver}
+        onClose={() => setShowDriver(false)}
+        onSubmit={handleCreateDriver}
+      />
+      <CreateVehicleModal
+        open={showVehicle}
+        onClose={() => setShowVehicle(false)}
+        onSubmit={handleCreateVehicle}
+      />
+      <TripDispatchModal
+        shipment={dispatchTarget}
+        drivers={drivers}
+        vehicles={vehicles}
+        onClose={() => setDispatchTarget(null)}
+        onConfirm={handleDispatch}
+      />
+      <ArchitectureModal open={showArch} onClose={() => setShowArch(false)} />
+      <SettingsModal
+        open={showSettings}
+        onClose={() => setShowSettings(false)}
+        demoMode={demoMode}
+        onToggleDemoMode={handleToggleDemoMode}
+        onSaved={loadData}
+      />
     </div>
   );
 };
+
 export default App;

@@ -1,4 +1,4 @@
-import { Shipment, Driver, Vehicle, Trip, Invoice, LogisticsMetrics } from './types';
+import { Shipment, Driver, Vehicle, Trip, Invoice, LogisticsMetrics, Customer } from './types';
 
 export const INITIAL_METRICS: LogisticsMetrics = {
   activeShipments: 48,
@@ -270,8 +270,7 @@ export const INITIAL_TRIPS: Trip[] = [
   }
 ];
 
-export const INITIAL_INVOICES: Invoice[] = [
-  {
+export const INITIAL_INVOICES: Invoice[] = [  {
     id: 301,
     invoiceNumber: "INV-2026-0891",
     customerName: "Amazon Fulfillment IN",
@@ -311,4 +310,11 @@ export const INITIAL_INVOICES: Invoice[] = [
     dueDate: "2026-09-26",
     shipmentTracking: "RS-PUN-7714",
   }
+];
+
+export const INITIAL_CUSTOMERS: Customer[] = [
+  { id: 1, companyName: "Amazon Fulfillment IN", contactPerson: "Rakesh Nair", email: "logistics@amazon.in", city: "Bengaluru" },
+  { id: 2, companyName: "Tata Electronics Ltd", contactPerson: "Priya Menon", email: "supplychain@tataelectronics.com", city: "Hyderabad" },
+  { id: 3, companyName: "Flipkart Internet Pvt", contactPerson: "Arjun Verma", email: "ops@flipkart.com", city: "Bengaluru" },
+  { id: 4, companyName: "Bajaj Auto Logistics", contactPerson: "Neha Kulkarni", email: "freight@bajajauto.co.in", city: "Pune" },
 ];

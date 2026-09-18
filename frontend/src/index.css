@@ -3,23 +3,111 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-ink-50 text-ink-900 font-sans;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #c3cbd8 transparent;
+  }
+
+  ::selection {
+    background: rgba(53, 105, 240, 0.16);
   }
 }
 
-/* Custom light scrollbars */
+@layer components {
+  .panel {
+    @apply rounded-xl border border-ink-200 bg-white shadow-card;
+  }
+
+  .panel-header {
+    @apply flex items-center justify-between gap-3 border-b border-ink-200 px-5 py-3.5;
+  }
+
+  .label-mono {
+    @apply font-mono text-[10.5px] uppercase tracking-[0.14em] text-ink-400;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-[13px] font-semibold transition-all duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-600 text-white shadow-card hover:bg-brand-700;
+  }
+
+  .btn-ghost {
+    @apply btn border border-ink-200 bg-white text-ink-700 hover:bg-ink-50 hover:text-ink-900;
+  }
+
+  .btn-quiet {
+    @apply btn text-ink-500 hover:bg-ink-100 hover:text-ink-800;
+  }
+
+  .field {
+    @apply w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-[13.5px] text-ink-900 placeholder:text-ink-400 transition-colors focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-500/10;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-[12px] font-semibold text-ink-700;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold;
+  }
+
+  .th {
+    @apply px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-400;
+  }
+
+  .td {
+    @apply px-4 py-3 text-[13px] text-ink-700;
+  }
+}
+
+@layer utilities {
+  .stagger > * {
+    animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0.02s; }
+  .stagger > *:nth-child(2) { animation-delay: 0.06s; }
+  .stagger > *:nth-child(3) { animation-delay: 0.1s; }
+  .stagger > *:nth-child(4) { animation-delay: 0.14s; }
+  .stagger > *:nth-child(5) { animation-delay: 0.18s; }
+  .stagger > *:nth-child(6) { animation-delay: 0.22s; }
+  .stagger > *:nth-child(7) { animation-delay: 0.26s; }
+  .stagger > *:nth-child(8) { animation-delay: 0.3s; }
+}
+
+/* Light scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #c3cbd8;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #98a4b7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

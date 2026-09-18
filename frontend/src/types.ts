@@ -20,6 +20,8 @@ export interface Shipment {
   estimatedDelivery: string;
   assignedDriverId?: number;
   assignedVehicleId?: number;
+  customerId?: number;
+  invoiceId?: number;
 }
 
 export interface Driver {
@@ -31,6 +33,7 @@ export interface Driver {
   assignedVehiclePlate?: string;
   tripsCompleted: number;
   rating: number;
+  experienceYears?: number;
   avatarUrl: string;
 }
 
@@ -80,4 +83,12 @@ export interface LogisticsMetrics {
   totalRevenueMonthly: number;
   availableDrivers: number;
   pendingDeliveries: number;
+}
+
+export interface Customer {
+  id: number;
+  companyName: string;
+  contactPerson: string;
+  email: string;
+  city: string;
 }
