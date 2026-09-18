@@ -3,8 +3,6 @@ import {
   Navigation, 
   Truck, 
   User, 
-  Package, 
-  CheckCircle, 
   X 
 } from 'lucide-react';
 import { Shipment, Driver, Vehicle } from '../types';
@@ -40,48 +38,48 @@ export const TripDispatchModal: React.FC<TripDispatchModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
-        <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2 text-indigo-400">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl">
+        <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2 text-blue-600">
             <Navigation className="h-5 w-5" />
-            <h3 className="text-base font-bold text-white">Trip Dispatch Orchestrator</h3>
+            <h3 className="text-base font-bold text-slate-900">Trip Dispatch Orchestrator</h3>
           </div>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-white rounded-lg">
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 rounded-lg">
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Selected Shipment Summary */}
-        <div className="rounded-xl border border-indigo-500/20 bg-indigo-950/20 p-3.5 mb-4">
+        <div className="rounded-lg border border-blue-100 bg-blue-50/50 p-3.5 mb-4">
           <div className="flex justify-between items-center mb-1">
-            <span className="font-mono text-xs font-bold text-indigo-300">
+            <span className="font-mono text-xs font-bold text-blue-700">
               {shipment.trackingNumber}
             </span>
-            <span className="text-[11px] font-bold text-slate-300">
+            <span className="text-xs font-semibold text-slate-700">
               {shipment.weightKg.toLocaleString()} kg
             </span>
           </div>
-          <div className="text-xs text-slate-200 font-semibold">{shipment.customerName}</div>
-          <div className="text-xs text-slate-400 mt-1">
-            {shipment.origin} <span className="text-indigo-400">➔</span> {shipment.destination}
+          <div className="text-xs text-slate-900 font-medium">{shipment.customerName}</div>
+          <div className="text-xs text-slate-600 mt-1">
+            {shipment.origin} <span className="text-blue-600">→</span> {shipment.destination}
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Driver Selection */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <User className="h-3.5 w-3.5 text-indigo-400" /> Assign Certified Driver
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <User className="h-3.5 w-3.5 text-blue-600" /> Assign Driver
             </label>
             <select
               value={selectedDriverId}
               onChange={(e) => setSelectedDriverId(Number(e.target.value))}
-              className="w-full rounded-xl border border-slate-700 bg-slate-950 p-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 bg-white p-2 text-xs text-slate-900 focus:border-blue-500 focus:outline-none"
             >
               {availableDrivers.map((d) => (
                 <option key={d.id} value={d.id}>
-                  {d.fullName} (Rating: {d.rating.toFixed(1)}★, Status: {d.status})
+                  {d.fullName} (Rating: {d.rating.toFixed(1)}, Status: {d.status})
                 </option>
               ))}
             </select>
@@ -89,13 +87,13 @@ export const TripDispatchModal: React.FC<TripDispatchModalProps> = ({
 
           {/* Vehicle Selection */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <Truck className="h-3.5 w-3.5 text-indigo-400" /> Assign Fleet Haulage Unit
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <Truck className="h-3.5 w-3.5 text-blue-600" /> Assign Vehicle
             </label>
             <select
               value={selectedVehicleId}
               onChange={(e) => setSelectedVehicleId(Number(e.target.value))}
-              className="w-full rounded-xl border border-slate-700 bg-slate-950 p-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 bg-white p-2 text-xs text-slate-900 focus:border-blue-500 focus:outline-none"
             >
               {activeVehicles.map((v) => (
                 <option key={v.id} value={v.id}>
@@ -105,23 +103,23 @@ export const TripDispatchModal: React.FC<TripDispatchModalProps> = ({
             </select>
           </div>
 
-          <div className="rounded-xl bg-slate-950/70 p-3 text-[11px] text-slate-400 border border-slate-800">
-            <span className="font-semibold text-slate-200">TripController Execution:</span> Allocates driver and vehicle, generates unique `tripCode`, marks shipment `IN_TRANSIT`, and publishes automated notifications.
+          <div className="rounded-lg bg-slate-50 p-3 text-[11px] text-slate-600 border border-slate-200">
+            <span className="font-semibold text-slate-800">TripController:</span> Allocates driver and vehicle, generates trip code, updates shipment status to IN_TRANSIT.
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-800 bg-slate-800/80 px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-800"
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-sm"
             >
-              Confirm Dispatch & Track Live
+              Confirm Dispatch
             </button>
           </div>
         </form>

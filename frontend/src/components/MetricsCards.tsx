@@ -1,11 +1,9 @@
 import React from 'react';
 import { 
   Package, 
-  TrendingUp, 
   Clock, 
-  DollarSign, 
-  Truck, 
-  AlertCircle 
+  IndianRupee, 
+  Truck 
 } from 'lucide-react';
 import { LogisticsMetrics } from '../types';
 
@@ -20,36 +18,28 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics }) => {
       value: metrics.activeShipments,
       subtext: '+12% from last week',
       icon: Package,
-      gradient: 'from-blue-500/10 to-indigo-500/10',
-      border: 'border-blue-500/20',
-      iconColor: 'text-blue-400',
+      iconBg: 'bg-blue-50 text-blue-600',
     },
     {
       title: 'Fleet Utilization',
       value: `${metrics.fleetUtilizationPercent}%`,
-      subtext: '34 of 39 haulage vehicles active',
+      subtext: '34 of 39 haulage units active',
       icon: Truck,
-      gradient: 'from-indigo-500/10 to-purple-500/10',
-      border: 'border-indigo-500/20',
-      iconColor: 'text-indigo-400',
+      iconBg: 'bg-indigo-50 text-indigo-600',
     },
     {
       title: 'On-Time Delivery SLA',
       value: `${metrics.onTimeDeliveryRate}%`,
-      subtext: 'Zero critical route delays',
+      subtext: 'Zero route delays reported',
       icon: Clock,
-      gradient: 'from-emerald-500/10 to-teal-500/10',
-      border: 'border-emerald-500/20',
-      iconColor: 'text-emerald-400',
+      iconBg: 'bg-emerald-50 text-emerald-600',
     },
     {
-      title: 'Monthly Freight Billed',
+      title: 'Freight Billed (Monthly)',
       value: `₹${(metrics.totalRevenueMonthly / 1000).toFixed(1)}k`,
       subtext: 'Automated invoice generation',
-      icon: DollarSign,
-      gradient: 'from-amber-500/10 to-orange-500/10',
-      border: 'border-amber-500/20',
-      iconColor: 'text-amber-400',
+      icon: IndianRupee,
+      iconBg: 'bg-slate-100 text-slate-700',
     },
   ];
 
@@ -60,22 +50,21 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics }) => {
         return (
           <div
             key={idx}
-            className={`relative overflow-hidden rounded-2xl border ${card.border} bg-gradient-to-br ${card.gradient} bg-slate-900/60 p-5 backdrop-blur-sm transition-all hover:scale-[1.01]`}
+            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 {card.title}
               </span>
-              <div className={`rounded-xl bg-slate-800/80 p-2 ${card.iconColor}`}>
+              <div className={`rounded-lg p-2 ${card.iconBg}`}>
                 <Icon className="h-4 w-4" />
               </div>
             </div>
-            <div className="mt-4">
-              <div className="text-2xl font-black tracking-tight text-white">
+            <div className="mt-3">
+              <div className="text-2xl font-bold tracking-tight text-slate-900 font-mono">
                 {card.value}
               </div>
-              <p className="mt-1 text-xs text-slate-400 flex items-center gap-1">
-                <TrendingUp className="h-3 w-3 text-emerald-400 inline" />
+              <p className="mt-1 text-xs text-slate-500">
                 {card.subtext}
               </p>
             </div>

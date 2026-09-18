@@ -37,11 +37,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="w-64 border-r border-slate-800 bg-slate-950/60 p-4 flex flex-col justify-between hidden md:flex min-h-[calc(100vh-4rem)]">
+    <aside className="w-64 border-r border-slate-200 bg-white p-4 flex flex-col justify-between hidden md:flex min-h-[calc(100vh-4rem)]">
       <div className="space-y-6">
         <div>
-          <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-            Operations Control
+          <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
+            Operations
           </p>
           <nav className="space-y-1">
             {navItems.map((item) => {
@@ -51,22 +51,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => onSelectTab(item.id)}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition-all ${
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/25'
-                      : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'
+                      ? 'bg-blue-600 text-white font-semibold'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                    <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
                     <span>{item.label}</span>
                   </div>
                   {item.badge !== undefined && item.badge > 0 && (
                     <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                         isActive
                           ? 'bg-white/20 text-white'
-                          : 'bg-slate-800 text-slate-400'
+                          : 'bg-slate-100 text-slate-600'
                       }`}
                     >
                       {item.badge}
@@ -78,32 +78,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
         </div>
 
-        {/* System Architecture Quick Banner */}
-        <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-b from-indigo-950/40 to-slate-900/60 p-3.5">
-          <div className="flex items-center gap-2 text-indigo-400 mb-1.5">
-            <Cpu className="h-4 w-4" />
-            <span className="text-xs font-bold">System Topology</span>
+        {/* System Architecture Callout */}
+        <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3.5">
+          <div className="flex items-center gap-2 text-blue-700 font-semibold text-xs mb-1">
+            <Cpu className="h-4 w-4 text-blue-600" />
+            <span>Modular Monolith</span>
           </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
-            Inspect Spring Boot modular monolith boundaries, JPA schema, & event pipeline.
+          <p className="text-[11px] text-slate-600 leading-relaxed mb-3">
+            Spring Data JPA bounded contexts with clean microservice boundaries.
           </p>
           <button
             onClick={onOpenArchitecture}
-            className="w-full rounded-lg bg-indigo-500/10 border border-indigo-500/30 py-1.5 text-center text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 transition-all"
+            className="w-full rounded-lg bg-white border border-slate-200 py-1.5 text-center text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors shadow-sm"
           >
-            View System Design →
+            Architecture Details
           </button>
         </div>
       </div>
 
-      {/* Security & Health Status */}
-      <div className="rounded-xl border border-slate-800/80 bg-slate-900/50 p-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-1">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-          <span>Security & Auth</span>
+      {/* Security Status */}
+      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs">
+        <div className="flex items-center gap-2 font-semibold text-slate-800 mb-1">
+          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          <span>Spring Security 6</span>
         </div>
         <p className="text-[11px] text-slate-500">
-          Stateless JWT Filter Chains, BCrypt hashing, & Role-based Authorization.
+          Stateless JWT filter chain & role-based endpoints.
         </p>
       </div>
     </aside>
