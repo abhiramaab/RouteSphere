@@ -1,10 +1,11 @@
 export type ShipmentStatus = 'PENDING' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
-export type ShipmentPriority = 'NORMAL' | 'EXPRESS' | 'URGENT';
+export type ShipmentPriority = 'LOW' | 'MEDIUM' | 'HIGH';
 export type DriverStatus = 'AVAILABLE' | 'ON_DUTY' | 'OFF_DUTY';
-export type VehicleStatus = 'ACTIVE' | 'IN_MAINTENANCE' | 'DECOMMISSIONED';
-export type VehicleType = 'TRUCK' | 'VAN' | 'TRAILER' | 'SEMI_TRUCK';
+export type VehicleStatus = 'AVAILABLE' | 'IN_TRANSIT' | 'UNDER_SERVICE';
+export type VehicleType = 'TRUCK' | 'VAN' | 'MINI_TRUCK' | 'CONTAINER';
+export type FuelType = 'PETROL' | 'DIESEL' | 'ELECTRIC';
 export type TripStatus = 'SCHEDULED' | 'DISPATCHED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-export type PaymentStatus = 'PAID' | 'PENDING' | 'OVERDUE';
+export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
 
 export interface Shipment {
   id: number;
@@ -46,6 +47,7 @@ export interface Vehicle {
   currentOdometerKm: number;
   status: VehicleStatus;
   fuelEfficiencyKmPerL: number;
+  fuelType?: FuelType;
   lastMaintenanceDate: string;
 }
 
@@ -69,11 +71,49 @@ export interface Invoice {
   id: number;
   invoiceNumber: string;
   customerName: string;
+  customerId?: number;
   amount: number;
   status: PaymentStatus;
   issuedDate: string;
   dueDate: string;
   shipmentTracking: string;
+}
+
+export interface Customer {
+  id: number;
+  companyName: string;
+  contactPerson: string;
+  email: string;
+  city: string;
+  state?: string;
+  address?: string;
+  pincode?: string;
+  country?: string;
+  gst?: string;
+}
+
+export interface FuelLog {
+  id: number;
+  fuelQuantity: number;
+  fuelCost: number;
+  fuelStation: string;
+  driverName: string;
+  driverId?: number;
+  shipmentId: number;
+  customerName?: string;
+  vehicleId?: number;
+  vehicleNumber?: string;
+}
+
+export interface Maintenance {
+  id: number;
+  serviceType: string;
+  serviceCost: number;
+  lastServiceDate: string;
+  nextServiceDate?: string;
+  remarks?: string;
+  vehicleStatus: VehicleStatus;
+  vehicleId: number;
 }
 
 export interface LogisticsMetrics {
@@ -83,12 +123,4 @@ export interface LogisticsMetrics {
   totalRevenueMonthly: number;
   availableDrivers: number;
   pendingDeliveries: number;
-}
-
-export interface Customer {
-  id: number;
-  companyName: string;
-  contactPerson: string;
-  email: string;
-  city: string;
 }

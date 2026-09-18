@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Receipt, Search, Download, TrendingUp, Clock, CheckCircle2 } from 'lucide-react';
+import { Receipt, Search, Download, TrendingUp, Clock, CheckCircle2, Plus } from 'lucide-react';
 import { Invoice, PaymentStatus } from '../../types';
 import { paymentStatusMeta, inr, shortDate } from '../../lib/format';
 import { StatusChip, EmptyState, Sparkline } from '../ui/atoms';
@@ -7,9 +7,10 @@ import { StatusChip, EmptyState, Sparkline } from '../ui/atoms';
 interface InvoicesScreenProps {
   invoices: Invoice[];
   query: string;
+  onCreate: () => void;
 }
 
-export const InvoicesScreen: React.FC<InvoicesScreenProps> = ({ invoices, query }) => {
+export const InvoicesScreen: React.FC<InvoicesScreenProps> = ({ invoices, query, onCreate }) => {
   const [status, setStatus] = useState<PaymentStatus | 'ALL'>('ALL');
 
   const filtered = useMemo(() => {
@@ -29,8 +30,8 @@ export const InvoicesScreen: React.FC<InvoicesScreenProps> = ({ invoices, query 
   const totals = useMemo(() => {
     const paid = invoices.filter((i) => i.status === 'PAID').reduce((s, i) => s + i.amount, 0);
     const pending = invoices.filter((i) => i.status === 'PENDING').reduce((s, i) => s + i.amount, 0);
-    const overdue = invoices.filter((i) => i.status === 'OVERDUE').reduce((s, i) => s + i.amount, 0);
-    return { paid, pending, overdue };
+    const failed = invoices.filter((i) => i.status === 'FAILED').reduce((s, i) => s + i.amount, 0);
+    return { paid, pending, failed };
   }, [invoices]);
 
   return (
@@ -39,7 +40,7 @@ export const InvoicesScreen: React.FC<InvoicesScreenProps> = ({ invoices, query 
         {[
           { label: 'Collected', value: totals.paid, tone: 'text-emerald-700 bg-emerald-50', icon: CheckCircle2 },
           { label: 'Pending', value: totals.pending, tone: 'text-amber-700 bg-amber-50', icon: Clock },
-          { label: 'Overdue', value: totals.overdue, tone: 'text-rose-700 bg-rose-50', icon: TrendingUp },
+          { label: 'Failed', value: totals.failed, tone: 'text-rose-700 bg-rose-50', icon: TrendingUp },
         ].map((s, i) => (
           <div key={s.label} className="panel animate-rise p-4" style={{ animationDelay: `${i * 60}ms` }}>
             <div className="flex items-center justify-between">
@@ -60,7 +61,7 @@ export const InvoicesScreen: React.FC<InvoicesScreenProps> = ({ invoices, query 
       </div>
 
       <div className="panel overflow-hidden">
-        <div className="panel-header">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-200 px-5 py-3.5">
           <div className="flex items-center gap-2">
             <Receipt className="h-4 w-4 text-ink-400" />
             <h2 className="text-[14px] font-bold tracking-tight text-ink-900">Invoices</h2>
@@ -69,7 +70,7 @@ export const InvoicesScreen: React.FC<InvoicesScreenProps> = ({ invoices, query 
             </span>
           </div>
           <div className="flex gap-1">
-            {(['ALL', 'PAID', 'PENDING', 'OVERDUE'] as const).map((s) => (
+            {(['ALL', 'PAID', 'PENDING', 'FAILED'] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setStatus(s)}
@@ -81,6 +82,9 @@ export const InvoicesScreen: React.FC<InvoicesScreenProps> = ({ invoices, query 
               </button>
             ))}
           </div>
+          <button onClick={onCreate} className="btn-primary ml-2 px-3 py-1.5">
+            <Plus className="h-3.5 w-3.5" /> New invoice
+          </button>
         </div>
 
         {filtered.length === 0 ? (

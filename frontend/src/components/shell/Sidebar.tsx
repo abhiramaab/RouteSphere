@@ -9,14 +9,28 @@ import {
   Cpu,
   ChevronLeft,
   X,
+  Building2,
+  Fuel,
+  Wrench,
+  BookOpen,
 } from 'lucide-react';
 
-export type NavTab = 'overview' | 'shipments' | 'trips' | 'fleet' | 'drivers' | 'invoices';
+export type NavTab =
+  | 'overview'
+  | 'shipments'
+  | 'trips'
+  | 'fleet'
+  | 'drivers'
+  | 'customers'
+  | 'invoices'
+  | 'fuel'
+  | 'maintenance';
 
 interface SidebarProps {
   currentTab: NavTab;
   onSelectTab: (tab: NavTab) => void;
   onOpenArchitecture: () => void;
+  onOpenDocs: () => void;
   shipmentsCount: number;
   activeTripsCount: number;
   collapsed: boolean;
@@ -31,13 +45,17 @@ const NAV: { id: NavTab; label: string; icon: React.ElementType }[] = [
   { id: 'trips', label: 'Trips & dispatch', icon: Navigation },
   { id: 'fleet', label: 'Fleet', icon: Truck },
   { id: 'drivers', label: 'Drivers', icon: Users },
+  { id: 'customers', label: 'Customers', icon: Building2 },
   { id: 'invoices', label: 'Invoices', icon: Receipt },
+  { id: 'fuel', label: 'Fuel logs', icon: Fuel },
+  { id: 'maintenance', label: 'Maintenance', icon: Wrench },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentTab,
   onSelectTab,
   onOpenArchitecture,
+  onOpenDocs,
   shipmentsCount,
   activeTripsCount,
   collapsed,
@@ -132,8 +150,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               View architecture
             </button>
+            <button
+              onClick={onOpenDocs}
+              className="mt-1.5 flex w-full items-center justify-center gap-1.5 rounded-md bg-brand-600 py-1.5 text-[11.5px] font-semibold text-white transition-colors hover:bg-brand-700"
+            >
+              <BookOpen className="h-3.5 w-3.5" /> How it works
+            </button>
           </div>
-        ) : null}
+        ) : (
+          <button
+            onClick={onOpenDocs}
+            className="flex w-full items-center justify-center rounded-lg border border-ink-200 py-2 text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-800"
+            title="How it works"
+          >
+            <BookOpen className="h-4 w-4" />
+          </button>
+        )}
 
         <button
           onClick={onToggleCollapse}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Truck, Loader2 } from 'lucide-react';
 import { Modal } from '../ui/Modal';
+import { VehicleType, FuelType } from '../../types';
 
 interface Props {
   open: boolean;
@@ -9,8 +10,8 @@ interface Props {
     plateNumber: string;
     model: string;
     capacityKg: number;
-    type: 'TRUCK' | 'VAN' | 'SEMI_TRUCK' | 'TRAILER';
-    fuelType?: string;
+    type: VehicleType;
+    fuelType: FuelType;
   }) => Promise<void>;
 }
 
@@ -18,12 +19,14 @@ export const CreateVehicleModal: React.FC<Props> = ({ open, onClose, onSubmit })
   const [plate, setPlate] = useState('');
   const [model, setModel] = useState('');
   const [capacity, setCapacity] = useState('');
-  const [type, setType] = useState<'TRUCK' | 'VAN' | 'SEMI_TRUCK' | 'TRAILER'>('TRUCK');
-  const [fuel, setFuel] = useState('DIESEL');
+  const [type, setType] = useState<VehicleType>('TRUCK');
+  const [fuel, setFuel] = useState<FuelType>('DIESEL');
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setBusy(true);
     try {
       await onSubmit({
@@ -36,6 +39,8 @@ export const CreateVehicleModal: React.FC<Props> = ({ open, onClose, onSubmit })
       setPlate('');
       setModel('');
       setCapacity('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not register vehicle.');
     } finally {
       setBusy(false);
     }
@@ -77,12 +82,12 @@ export const CreateVehicleModal: React.FC<Props> = ({ open, onClose, onSubmit })
             <select
               className="field"
               value={type}
-              onChange={(e) => setType(e.target.value as typeof type)}
+              onChange={(e) => setType(e.target.value as VehicleType)}
             >
               <option value="TRUCK">Truck</option>
-              <option value="SEMI_TRUCK">Semi truck</option>
+              <option value="CONTAINER">Container</option>
+              <option value="MINI_TRUCK">Mini truck</option>
               <option value="VAN">Van</option>
-              <option value="TRAILER">Trailer</option>
             </select>
           </div>
         </div>
@@ -111,14 +116,22 @@ export const CreateVehicleModal: React.FC<Props> = ({ open, onClose, onSubmit })
           </div>
           <div>
             <label className="field-label">Fuel type</label>
-            <select className="field" value={fuel} onChange={(e) => setFuel(e.target.value)}>
+            <select
+              className="field"
+              value={fuel}
+              onChange={(e) => setFuel(e.target.value as FuelType)}
+            >
               <option value="DIESEL">Diesel</option>
               <option value="PETROL">Petrol</option>
-              <option value="CNG">CNG</option>
               <option value="ELECTRIC">Electric</option>
             </select>
           </div>
         </div>
+        {error ? (
+          <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-[12.5px] text-rose-700">
+            {error}
+          </div>
+        ) : null}
       </form>
     </Modal>
   );

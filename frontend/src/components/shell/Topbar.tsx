@@ -12,6 +12,11 @@ import {
   ChevronDown,
   Wifi,
   WifiOff,
+  Building2,
+  FileText,
+  Fuel,
+  Wrench,
+  BookOpen,
 } from 'lucide-react';
 import { RouteSphereApi, type Session } from '../../api';
 import { Avatar } from '../ui/atoms';
@@ -22,8 +27,13 @@ interface TopbarProps {
   onOpenCreateShipment: () => void;
   onOpenCreateDriver: () => void;
   onOpenCreateVehicle: () => void;
+  onCreateInvoice: () => void;
+  onCreateCustomer: () => void;
+  onCreateFuel: () => void;
+  onCreateMaintenance: () => void;
   onOpenDispatch: () => void;
   onOpenSettings: () => void;
+  onOpenDocs: () => void;
   onLogout: () => void;
   session: Session | null;
   demoMode: boolean;
@@ -37,8 +47,13 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenCreateShipment,
   onOpenCreateDriver,
   onOpenCreateVehicle,
+  onCreateInvoice,
+  onCreateCustomer,
+  onCreateFuel,
+  onCreateMaintenance,
   onOpenDispatch,
   onOpenSettings,
+  onOpenDocs,
   onLogout,
   session,
   demoMode,
@@ -62,10 +77,14 @@ export const Topbar: React.FC<TopbarProps> = ({
   }, []);
 
   const createItems = [
+    { icon: Building2, label: 'New customer', hint: 'POST /api/customer', fn: onCreateCustomer },
+    { icon: FileText, label: 'New invoice', hint: 'POST /api/invoice', fn: onCreateInvoice },
     { icon: Package, label: 'New shipment', hint: 'POST /api/shipment', fn: onOpenCreateShipment },
     { icon: Navigation, label: 'Dispatch trip', hint: 'POST /api/trip', fn: onOpenDispatch },
     { icon: Truck, label: 'Register vehicle', hint: 'POST /api/vehicle', fn: onOpenCreateVehicle },
     { icon: UserPlus, label: 'Onboard driver', hint: 'POST /api/driver', fn: onOpenCreateDriver },
+    { icon: Fuel, label: 'Log fuel', hint: 'POST /api/fuellog', fn: onCreateFuel },
+    { icon: Wrench, label: 'Log maintenance', hint: 'POST /api/maintenance', fn: onCreateMaintenance },
   ];
 
   return (
@@ -118,7 +137,10 @@ export const Topbar: React.FC<TopbarProps> = ({
             <ChevronDown className="hidden h-3 w-3 opacity-70 sm:inline" />
           </button>
           {createOpen ? (
-            <div className="absolute right-0 top-11 z-50 w-60 animate-pop-in rounded-xl border border-ink-200 bg-white p-1.5 shadow-pop">
+            <div className="absolute right-0 top-11 z-50 max-h-[70vh] w-64 animate-pop-in overflow-y-auto rounded-xl border border-ink-200 bg-white p-1.5 shadow-pop">
+              <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+                Create
+              </div>
               {createItems.map((item) => (
                 <button
                   key={item.label}
@@ -182,6 +204,15 @@ export const Topbar: React.FC<TopbarProps> = ({
                   Role · {session?.role || 'DISPATCHER'}
                 </p>
               </div>
+              <button
+                onClick={() => {
+                  setUserOpen(false);
+                  onOpenDocs();
+                }}
+                className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] text-ink-700 transition-colors hover:bg-ink-50"
+              >
+                <BookOpen className="h-3.5 w-3.5 text-ink-400" /> How it works
+              </button>
               <button
                 onClick={() => {
                   setUserOpen(false);

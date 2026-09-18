@@ -44,7 +44,7 @@ export const ShipmentsScreen: React.FC<ShipmentsScreenProps> = ({
           s.customerName.toLowerCase().includes(q)
       );
     }
-    const priorityRank: Record<string, number> = { URGENT: 3, EXPRESS: 2, NORMAL: 1 };
+    const priorityRank: Record<string, number> = { HIGH: 3, MEDIUM: 2, LOW: 1 };
     return [...list].sort((a, b) => {
       if (sort === 'weight') return b.weightKg - a.weightKg;
       if (sort === 'priority') return priorityRank[b.priority] - priorityRank[a.priority];

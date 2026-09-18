@@ -19,7 +19,7 @@ export const TripDispatchModal: React.FC<Props> = ({
   onConfirm,
 }) => {
   const availableDrivers = drivers.filter((d) => d.status === 'AVAILABLE');
-  const activeVehicles = vehicles.filter((v) => v.status === 'ACTIVE');
+  const activeVehicles = vehicles.filter((v) => v.status === 'AVAILABLE');
   const [driverId, setDriverId] = useState<number | ''>(availableDrivers[0]?.id ?? '');
   const [vehicleId, setVehicleId] = useState<number | ''>(activeVehicles[0]?.id ?? '');
   const [busy, setBusy] = useState(false);

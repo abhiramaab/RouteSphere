@@ -8,14 +8,11 @@ import {
   Invoice,
   LogisticsMetrics,
   Customer,
+  FuelLog,
+  Maintenance,
 } from './types';
 import {
   INITIAL_METRICS,
-  INITIAL_SHIPMENTS,
-  INITIAL_DRIVERS,
-  INITIAL_VEHICLES,
-  INITIAL_TRIPS,
-  INITIAL_INVOICES,
   INITIAL_CUSTOMERS,
 } from './mockData';
 
@@ -28,18 +25,28 @@ import { FleetScreen } from './components/screens/FleetScreen';
 import { DriversScreen } from './components/screens/DriversScreen';
 import { TripsScreen } from './components/screens/TripsScreen';
 import { InvoicesScreen } from './components/screens/InvoicesScreen';
+import { CustomersScreen } from './components/screens/CustomersScreen';
+import { FuelLogsScreen } from './components/screens/FuelLogsScreen';
+import { MaintenanceScreen } from './components/screens/MaintenanceScreen';
 
 import { CreateShipmentModal } from './components/modals/CreateShipmentModal';
 import { CreateDriverModal } from './components/modals/CreateDriverModal';
 import { CreateVehicleModal } from './components/modals/CreateVehicleModal';
+import { CreateInvoiceModal } from './components/modals/CreateInvoiceModal';
+import { CreateCustomerModal } from './components/modals/CreateCustomerModal';
+import { CreateFuelLogModal } from './components/modals/CreateFuelLogModal';
+import { CreateMaintenanceModal } from './components/modals/CreateMaintenanceModal';
 import { TripDispatchModal } from './components/modals/TripDispatchModal';
 import { ArchitectureModal } from './components/modals/ArchitectureModal';
 import { SettingsModal } from './components/modals/SettingsModal';
+import { DocumentationModal } from './components/modals/DocumentationModal';
 import { SectionHeading } from './components/ui/atoms';
 
 export const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(RouteSphereApi.getSession());
-  const [authed, setAuthed] = useState<boolean>(RouteSphereApi.isAuthenticated() || RouteSphereApi.isDemoMode());
+  const [authed, setAuthed] = useState<boolean>(
+    RouteSphereApi.isAuthenticated() || RouteSphereApi.isDemoMode()
+  );
 
   const [tab, setTab] = useState<NavTab>('overview');
   const [demoMode, setDemoMode] = useState(RouteSphereApi.isDemoMode());
@@ -55,18 +62,26 @@ export const App: React.FC = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
+  const [fuelLogs, setFuelLogs] = useState<FuelLog[]>([]);
+  const [maintenance, setMaintenance] = useState<Maintenance[]>([]);
 
+  // modals
   const [showShipment, setShowShipment] = useState(false);
   const [showDriver, setShowDriver] = useState(false);
   const [showVehicle, setShowVehicle] = useState(false);
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [showCustomer, setShowCustomer] = useState(false);
+  const [showFuel, setShowFuel] = useState(false);
+  const [showMaintenance, setShowMaintenance] = useState(false);
   const [showArch, setShowArch] = useState(false);
+  const [showDocs, setShowDocs] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [dispatchTarget, setDispatchTarget] = useState<Shipment | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [m, s, d, v, t, i, c] = await Promise.all([
+      const [m, s, d, v, t, i, c, f, mt] = await Promise.all([
         RouteSphereApi.getMetrics(),
         RouteSphereApi.getShipments(),
         RouteSphereApi.getDrivers(),
@@ -74,6 +89,8 @@ export const App: React.FC = () => {
         RouteSphereApi.getTrips(),
         RouteSphereApi.getInvoices(),
         RouteSphereApi.getCustomers(),
+        RouteSphereApi.getFuelLogs(),
+        RouteSphereApi.getMaintenance(),
       ]);
       setMetrics(m);
       setShipments(s);
@@ -82,6 +99,8 @@ export const App: React.FC = () => {
       setTrips(t);
       setInvoices(i);
       setCustomers(c);
+      setFuelLogs(f);
+      setMaintenance(mt);
     } catch (e) {
       console.error('Failed to load data', e);
     } finally {
@@ -104,7 +123,8 @@ export const App: React.FC = () => {
     setAuthed(false);
   };
 
-  const handleCreateShipment = async (data: Partial<Shipment>) => {
+  // ----- create handlers -----
+  const handleCreateShipment = async (data: Partial<Shipment> & { invoiceId: number }) => {
     const created = await RouteSphereApi.createShipment(data);
     setShipments((prev) => [created, ...prev]);
     setShowShipment(false);
@@ -126,12 +146,67 @@ export const App: React.FC = () => {
     plateNumber: string;
     model: string;
     capacityKg: number;
-    type: 'TRUCK' | 'VAN' | 'SEMI_TRUCK' | 'TRAILER';
-    fuelType?: string;
+    type: Vehicle['type'];
+    fuelType?: Vehicle['fuelType'];
   }) => {
     const created = await RouteSphereApi.createVehicle(data);
     setVehicles((prev) => [created, ...prev]);
     setShowVehicle(false);
+  };
+
+  const handleCreateInvoice = async (data: {
+    invoiceNumber: string;
+    invoiceDate: string;
+    gstAmount: number;
+    paymentStatus: Invoice['status'];
+    customerId: number;
+  }) => {
+    const created = await RouteSphereApi.createInvoice(data);
+    setInvoices((prev) => [created, ...prev]);
+    setShowInvoice(false);
+    void loadData();
+  };
+
+  const handleCreateCustomer = async (data: {
+    companyName: string;
+    contactPerson: string;
+    email: string;
+    address: string;
+    city: string;
+    state: string;
+    pincode: string;
+    country: string;
+    gst: string;
+  }) => {
+    const created = await RouteSphereApi.createCustomer(data);
+    setCustomers((prev) => [created, ...prev]);
+    setShowCustomer(false);
+  };
+
+  const handleCreateFuel = async (data: {
+    fuelQuantity: number;
+    fuelCost: number;
+    fuelStation: string;
+    shipmentId: number;
+  }) => {
+    const created = await RouteSphereApi.createFuelLog(data);
+    setFuelLogs((prev) => [created, ...prev]);
+    setShowFuel(false);
+  };
+
+  const handleCreateMaintenance = async (data: {
+    serviceType: string;
+    serviceCost: number;
+    lastServiceDate: string;
+    nextServiceDate?: string;
+    remarks?: string;
+    vehicleId: number;
+    vehicleStatus: Maintenance['vehicleStatus'];
+  }) => {
+    const created = await RouteSphereApi.createMaintenance(data);
+    setMaintenance((prev) => [created, ...prev]);
+    setShowMaintenance(false);
+    void loadData();
   };
 
   const handleDispatch = async (data: {
@@ -147,11 +222,12 @@ export const App: React.FC = () => {
     setDrivers((prev) =>
       prev.map((d) => (d.id === data.driverId ? { ...d, status: 'ON_DUTY' } : d))
     );
+    setVehicles((prev) =>
+      prev.map((v) => (v.id === data.vehicleId ? { ...v, status: 'IN_TRANSIT' } : v))
+    );
     setDispatchTarget(null);
     setTab('trips');
   };
-
-  const openDispatchFor = (s: Shipment) => setDispatchTarget(s);
 
   const quickDispatch = () => {
     const pending = shipments.find((s) => s.status === 'PENDING');
@@ -176,7 +252,10 @@ export const App: React.FC = () => {
     trips: { title: 'Trips & dispatch', description: 'Active routes and driver assignments' },
     fleet: { title: 'Fleet', description: 'Vehicle status, capacity and utilization' },
     drivers: { title: 'Drivers', description: 'Directory, availability and performance' },
+    customers: { title: 'Customers', description: 'Accounts that own invoices and shipments' },
     invoices: { title: 'Invoices', description: 'Billing, collections and payment status' },
+    fuel: { title: 'Fuel logs', description: 'Consumption, cost and per-litre rate' },
+    maintenance: { title: 'Maintenance', description: 'Service history and upcoming services' },
   };
 
   return (
@@ -185,6 +264,7 @@ export const App: React.FC = () => {
         currentTab={tab}
         onSelectTab={setTab}
         onOpenArchitecture={() => setShowArch(true)}
+        onOpenDocs={() => setShowDocs(true)}
         shipmentsCount={shipments.length}
         activeTripsCount={trips.filter((t) => t.status === 'IN_PROGRESS').length}
         collapsed={sidebarCollapsed}
@@ -199,8 +279,13 @@ export const App: React.FC = () => {
           onOpenCreateShipment={() => setShowShipment(true)}
           onOpenCreateDriver={() => setShowDriver(true)}
           onOpenCreateVehicle={() => setShowVehicle(true)}
+          onCreateInvoice={() => setShowInvoice(true)}
+          onCreateCustomer={() => setShowCustomer(true)}
+          onCreateFuel={() => setShowFuel(true)}
+          onCreateMaintenance={() => setShowMaintenance(true)}
           onOpenDispatch={quickDispatch}
           onOpenSettings={() => setShowSettings(true)}
+          onOpenDocs={() => setShowDocs(true)}
           onLogout={handleLogout}
           session={session}
           demoMode={demoMode}
@@ -221,10 +306,12 @@ export const App: React.FC = () => {
                     Syncing…
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5 text-[11.5px] font-medium text-emerald-600">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    {demoMode ? 'Demo data' : 'Live API'}
-                  </span>
+                  <button
+                    onClick={() => setShowDocs(true)}
+                    className="text-[12px] font-semibold text-brand-600 hover:text-brand-700"
+                  >
+                    How it works →
+                  </button>
                 )
               }
             />
@@ -235,7 +322,7 @@ export const App: React.FC = () => {
                 shipments={shipments}
                 trips={trips}
                 drivers={drivers}
-                onOpenShipment={openDispatchFor}
+                onOpenShipment={(s) => setDispatchTarget(s)}
                 onGoToTab={setTab}
               />
             )}
@@ -244,7 +331,7 @@ export const App: React.FC = () => {
                 shipments={shipments}
                 query={query}
                 onCreate={() => setShowShipment(true)}
-                onDispatch={openDispatchFor}
+                onDispatch={(s) => setDispatchTarget(s)}
                 onRefresh={loadData}
               />
             )}
@@ -256,25 +343,67 @@ export const App: React.FC = () => {
                 vehicles={vehicles}
                 query={query}
                 onCreate={() => setShowVehicle(true)}
+                onCreateMaintenance={() => setShowMaintenance(true)}
               />
             )}
             {tab === 'drivers' && (
-              <DriversScreen
-                drivers={drivers}
+              <DriversScreen drivers={drivers} query={query} onCreate={() => setShowDriver(true)} />
+            )}
+            {tab === 'customers' && (
+              <CustomersScreen
+                customers={customers}
                 query={query}
-                onCreate={() => setShowDriver(true)}
+                onCreate={() => setShowCustomer(true)}
+                onCreateInvoice={() => setShowInvoice(true)}
               />
             )}
-            {tab === 'invoices' && <InvoicesScreen invoices={invoices} query={query} />}
+            {tab === 'invoices' && (
+              <InvoicesScreen
+                invoices={invoices}
+                query={query}
+                onCreate={() => setShowInvoice(true)}
+              />
+            )}
+            {tab === 'fuel' && (
+              <FuelLogsScreen fuelLogs={fuelLogs} query={query} onCreate={() => setShowFuel(true)} />
+            )}
+            {tab === 'maintenance' && (
+              <MaintenanceScreen
+                records={maintenance}
+                vehicles={vehicles}
+                query={query}
+                onCreate={() => setShowMaintenance(true)}
+              />
+            )}
           </div>
         </main>
       </div>
 
+      {/* create chain */}
+      <CreateCustomerModal
+        open={showCustomer}
+        onClose={() => setShowCustomer(false)}
+        onSubmit={handleCreateCustomer}
+      />
+      <CreateInvoiceModal
+        open={showInvoice}
+        onClose={() => setShowInvoice(false)}
+        onSubmit={handleCreateInvoice}
+        customers={customers}
+        onCreateCustomer={() => {
+          setShowInvoice(false);
+          setShowCustomer(true);
+        }}
+      />
       <CreateShipmentModal
         open={showShipment}
         onClose={() => setShowShipment(false)}
         onSubmit={handleCreateShipment}
-        customers={customers}
+        invoices={invoices}
+        onCreateInvoice={() => {
+          setShowShipment(false);
+          setShowInvoice(true);
+        }}
       />
       <CreateDriverModal
         open={showDriver}
@@ -286,6 +415,18 @@ export const App: React.FC = () => {
         onClose={() => setShowVehicle(false)}
         onSubmit={handleCreateVehicle}
       />
+      <CreateFuelLogModal
+        open={showFuel}
+        onClose={() => setShowFuel(false)}
+        onSubmit={handleCreateFuel}
+        shipments={shipments}
+      />
+      <CreateMaintenanceModal
+        open={showMaintenance}
+        onClose={() => setShowMaintenance(false)}
+        onSubmit={handleCreateMaintenance}
+        vehicles={vehicles}
+      />
       <TripDispatchModal
         shipment={dispatchTarget}
         drivers={drivers}
@@ -294,6 +435,7 @@ export const App: React.FC = () => {
         onConfirm={handleDispatch}
       />
       <ArchitectureModal open={showArch} onClose={() => setShowArch(false)} />
+      <DocumentationModal open={showDocs} onClose={() => setShowDocs(false)} />
       <SettingsModal
         open={showSettings}
         onClose={() => setShowSettings(false)}

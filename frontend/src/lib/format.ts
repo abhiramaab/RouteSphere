@@ -76,9 +76,9 @@ export const shipmentStatusMeta: Record<ShipmentStatus, StatusMeta> = {
 };
 
 export const priorityMeta: Record<ShipmentPriority, StatusMeta> = {
-  NORMAL: { label: 'Normal', tone: 'slate' },
-  EXPRESS: { label: 'Express', tone: 'violet' },
-  URGENT: { label: 'Urgent', tone: 'red' },
+  LOW: { label: 'Low', tone: 'slate' },
+  MEDIUM: { label: 'Medium', tone: 'violet' },
+  HIGH: { label: 'High', tone: 'red' },
 };
 
 export const driverStatusMeta: Record<DriverStatus, StatusMeta> = {
@@ -88,9 +88,9 @@ export const driverStatusMeta: Record<DriverStatus, StatusMeta> = {
 };
 
 export const vehicleStatusMeta: Record<VehicleStatus, StatusMeta> = {
-  ACTIVE: { label: 'Active', tone: 'green' },
-  IN_MAINTENANCE: { label: 'Maintenance', tone: 'amber' },
-  DECOMMISSIONED: { label: 'Retired', tone: 'red' },
+  AVAILABLE: { label: 'Available', tone: 'green' },
+  IN_TRANSIT: { label: 'In transit', tone: 'blue' },
+  UNDER_SERVICE: { label: 'Under service', tone: 'amber' },
 };
 
 export const tripStatusMeta: Record<TripStatus, StatusMeta> = {
@@ -104,7 +104,8 @@ export const tripStatusMeta: Record<TripStatus, StatusMeta> = {
 export const paymentStatusMeta: Record<PaymentStatus, StatusMeta> = {
   PAID: { label: 'Paid', tone: 'green' },
   PENDING: { label: 'Pending', tone: 'amber' },
-  OVERDUE: { label: 'Overdue', tone: 'red' },
+  FAILED: { label: 'Failed', tone: 'red' },
+  REFUNDED: { label: 'Refunded', tone: 'violet' },
 };
 
 export const initials = (name: string) =>

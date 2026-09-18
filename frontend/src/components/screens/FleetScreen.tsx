@@ -8,10 +8,16 @@ interface FleetScreenProps {
   vehicles: Vehicle[];
   query: string;
   onCreate: () => void;
+  onCreateMaintenance: () => void;
 }
 
-export const FleetScreen: React.FC<FleetScreenProps> = ({ vehicles, query, onCreate }) => {
-  const [filter, setFilter] = useState<'ALL' | 'ACTIVE' | 'IN_MAINTENANCE'>('ALL');
+export const FleetScreen: React.FC<FleetScreenProps> = ({
+  vehicles,
+  query,
+  onCreate,
+  onCreateMaintenance,
+}) => {
+  const [filter, setFilter] = useState<'ALL' | 'AVAILABLE' | 'IN_TRANSIT' | 'UNDER_SERVICE'>('ALL');
 
   const filtered = useMemo(() => {
     let list = vehicles;
@@ -29,13 +35,13 @@ export const FleetScreen: React.FC<FleetScreenProps> = ({ vehicles, query, onCre
   }, [vehicles, filter, query]);
 
   const utilization = (v: Vehicle) =>
-    v.status === 'ACTIVE' ? 68 + (v.currentOdometerKm % 28) : v.status === 'IN_MAINTENANCE' ? 4 : 0;
+    v.status === 'IN_TRANSIT' ? 68 + (v.currentOdometerKm % 28) : v.status === 'UNDER_SERVICE' ? 4 : 0;
 
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex gap-1">
-          {(['ALL', 'ACTIVE', 'IN_MAINTENANCE'] as const).map((f) => (
+          {(['ALL', 'AVAILABLE', 'IN_TRANSIT', 'UNDER_SERVICE'] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -43,11 +49,14 @@ export const FleetScreen: React.FC<FleetScreenProps> = ({ vehicles, query, onCre
                 filter === f ? 'bg-ink-900 text-white' : 'bg-white text-ink-500 hover:text-ink-800 border border-ink-200'
               }`}
             >
-              {f === 'ALL' ? 'All vehicles' : f === 'ACTIVE' ? 'Active' : 'Maintenance'}
+              {f === 'ALL' ? 'All vehicles' : f === 'AVAILABLE' ? 'Available' : f === 'IN_TRANSIT' ? 'In transit' : 'Under service'}
             </button>
           ))}
         </div>
-        <button onClick={onCreate} className="btn-primary ml-auto px-3 py-1.5">
+        <button onClick={onCreateMaintenance} className="btn-ghost ml-auto px-3 py-1.5">
+          <Wrench className="h-3.5 w-3.5" /> Log maintenance
+        </button>
+        <button onClick={onCreate} className="btn-primary px-3 py-1.5">
           <Plus className="h-3.5 w-3.5" /> Register vehicle
         </button>
       </div>
@@ -93,7 +102,7 @@ export const FleetScreen: React.FC<FleetScreenProps> = ({ vehicles, query, onCre
                 <div className="h-1.5 overflow-hidden rounded-full bg-ink-100">
                   <div
                     className={`h-full rounded-full transition-[width] duration-700 ${
-                      v.status === 'ACTIVE'
+                      v.status === 'IN_TRANSIT'
                         ? 'bg-gradient-to-r from-emerald-400 to-emerald-600'
                         : 'bg-amber-400'
                     }`}
