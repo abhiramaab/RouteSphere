@@ -14,8 +14,13 @@ jobs:
         run: |
           TARGET_URL="${{ secrets.RENDER_BACKEND_URL }}"
           if [ -z "$TARGET_URL" ]; then
-            echo "RENDER_BACKEND_URL secret is not set. Please set it in repository secrets."
-            exit 1
+            TARGET_URL="https://routesphere-1.onrender.com"
           fi
           echo "Pinging $TARGET_URL ..."
-          curl -s -f "$TARGET_URL" > /dev/null && echo "Backend is up and active!" || echo "Failed to ping backend"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET_URL")
+          echo "Response HTTP Status: $STATUS"
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
+            echo "Render service is warm and healthy!"
+          else
+            echo "Warning: Received HTTP $STATUS"
+          fi
