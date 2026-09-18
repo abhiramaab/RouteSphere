@@ -1,8 +1,14 @@
-# RouteSphere - Logistics and Fleet Management
+# RouteSphere - Logistics & Fleet Operations Platform
+
+[![Live Platform](https://img.shields.io/badge/Live%20Platform-routesphere.abhiram.tech-blue?style=for-the-badge&logo=vercel)](https://routesphere.abhiram.tech/)
+[![Java 21](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/)
+[![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot-3.x-green?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
+
+**Live Interactive Dashboard:** [https://routesphere.abhiram.tech/](https://routesphere.abhiram.tech/)
 
 ## Overview
 
-RouteSphere is a RESTful backend application developed using Spring Boot for logistics and fleet management operations. The application provides APIs for managing customers, shipments, drivers, vehicles, trips, invoices, fuel logs, and vehicle maintenance while implementing JWT-based authentication and role-based authorization.
+RouteSphere is an enterprise logistics and fleet operations platform developed using Spring Boot and React. The application provides end-to-end APIs and real-time operations dashboards for managing shipments, drivers, fleet telematics, dispatch orchestration, automated billing, and fuel logs with JWT-based authentication.
 
 ---
 
