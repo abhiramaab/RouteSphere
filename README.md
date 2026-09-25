@@ -1,7 +1,6 @@
 <p align="center">
   <a href="https://routesphere.abhiram.tech">
-    <img src="./assets/routesphere-logo-dark.svg#gh-dark-mode-only" alt="RouteSphere" width="300" />
-    <img src="./assets/routesphere-logo-light.svg#gh-light-mode-only" alt="RouteSphere" width="300" />
+    <img src="./assets/routesphere-wordmark.svg" alt="RouteSphere" width="260" />
   </a>
 </p>
 
