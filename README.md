@@ -1,615 +1,258 @@
-# RouteSphere - Logistics & Fleet Operations Platform
+<p align="center">
+  <a href="https://routesphere.abhiram.tech">
+    <img src="./assets/routesphere-logo-dark.svg#gh-dark-mode-only" alt="RouteSphere" width="300" />
+    <img src="./assets/routesphere-logo-light.svg#gh-light-mode-only" alt="RouteSphere" width="300" />
+  </a>
+</p>
 
-[![Live Platform](https://img.shields.io/badge/Live%20Platform-routesphere.abhiram.tech-blue?style=for-the-badge&logo=vercel)](https://routesphere.abhiram.tech/)
-[![Java 21](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/)
-[![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot-3.x-green?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
+<h1 align="center">Enterprise Fleet Operations &amp; Logistics Management Engine</h1>
 
-**Live Interactive Dashboard:** [https://routesphere.abhiram.tech/](https://routesphere.abhiram.tech/)
+<p align="center">
+  Cloud-native fleet telemetry, dispatch orchestration, and automated billing platform.<br/>
+  Engineered with Java 21, Spring Boot 3, Spring Security, Hibernate, MySQL, and React.
+</p>
+
+<p align="center">
+  <a href="https://routesphere.abhiram.tech">
+    <img src="https://img.shields.io/badge/Live_Platform-routesphere.abhiram.tech-2563EB?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Platform" />
+  </a>
+  <a href="https://github.com/abhiramaab/RouteSphere">
+    <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repo" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=flat-square&logo=openjdk&logoColor=white" alt="Java 21" />
+  <img src="https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot 3" />
+  <img src="https://img.shields.io/badge/Spring_Security-JWT-6DB33F?style=flat-square&logo=springsecurity&logoColor=white" alt="Spring Security" />
+  <img src="https://img.shields.io/badge/MySQL-8.x-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL" />
+  <img src="https://img.shields.io/badge/Hibernate-ORM-59666C?style=flat-square&logo=hibernate&logoColor=white" alt="Hibernate" />
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License" />
+</p>
+
+---
+
+<details>
+<summary><strong>Table of Contents</strong></summary>
+
+- [Overview](#overview)
+- [System Architecture & Dispatch Lifecycle](#system-architecture--dispatch-lifecycle)
+- [System Design & Core Modules](#system-design--core-modules)
+  - [1. Dispatch Orchestration & Trip State Machine](#1-dispatch-orchestration--trip-state-machine)
+  - [2. Fleet Telematics & Preventative Maintenance](#2-fleet-telematics--preventative-maintenance)
+  - [3. Automated Invoicing & Billing Lifecycle](#3-automated-invoicing--billing-lifecycle)
+  - [4. Role-Based Access Control & JWT Security](#4-role-based-access-control--jwt-security)
+  - [5. Resilient Event Notifications & Alerts](#5-resilient-event-notifications--alerts)
+- [Technology Stack](#technology-stack)
+- [Quickstart Guide](#quickstart-guide)
+  - [1. Prerequisites](#1-prerequisites)
+  - [2. Environment Configuration](#2-environment-configuration)
+  - [3. Running Backend Services](#3-running-backend-services)
+  - [4. Running Frontend Dashboard](#4-running-frontend-dashboard)
+- [API Reference](#api-reference)
+  - [Authentication](#authentication)
+  - [Shipment & Dispatch Management](#shipment--dispatch-management)
+  - [Fleet & Telematics](#fleet--telematics)
+  - [Billing & Invoicing](#billing--invoicing)
+- [Project Directory Layout](#project-directory-layout)
+
+</details>
+
+---
 
 ## Overview
 
-RouteSphere is an enterprise logistics and fleet operations platform developed using Spring Boot and React. The application provides end-to-end APIs and real-time operations dashboards for managing shipments, drivers, fleet telematics, dispatch orchestration, automated billing, and fuel logs with JWT-based authentication.
+RouteSphere is an enterprise-grade logistics orchestration and fleet operations engine. In modern freight operations, tracking physical assets across variable routes demands synchronized dispatch workflows, audit-proof billing, preventative vehicle maintenance schedules, and role-enforced telemetry visibility.
+
+RouteSphere addresses these requirements with a modular architecture:
+
+* **Dispatch Orchestration**: State-driven shipment pipelines coordinating origin-to-destination handoffs, driver allocations, and capacity constraints.
+* **Telematics & Fuel Audit Logs**: Systematic tracking of vehicle odometer readings, fuel consumption expenditures, and scheduled maintenance windows.
+* **Automated Accounting Workflows**: Real-time generation of billing invoices upon delivery completion with email receipt notifications.
+* **Granular Role-Based Security**: Decoupled access policies separating dispatch managers, operational fleet coordinators, and auditing personnel.
 
 ---
 
-# Technology Stack
-
-- Java 21
-- Spring Boot 3
-- Spring Security
-- Spring Data JPA
-- Hibernate
-- MySQL
-- Maven
-- JWT Authentication
-- Swagger / OpenAPI
-- Resend Email API
-- Lombok
-- SLF4J + Logback
-
----
-
-# Features
-
-# Features
-
-- JWT Authentication
-- Role-Based Authorization
-- Customer Management
-- Driver Management
-- Vehicle Management
-- Shipment Management
-- Trip Management
-- Invoice Management
-- Fuel Log Management
-- Vehicle Maintenance Management
-- Automated Shipment Email Notifications
-- Automated Payment Confirmation Emails
-- Logging using SLF4J & Logback
-- Global Exception Handling
-- Swagger API Documentation
-
----
-
-# Project Structure
-
-```
-# Project Structure
+## System Architecture & Dispatch Lifecycle
 
 ```text
-src/main/java/com/RouteSphere/REST/
-│
-├── config/
-│   ├── OpenApiConfig.java
-│   ├── PasswordConfig.java
-|   ├── ResendConfig.java
-│   ├── SecurityConfig.java
-│   └── SwaggerSecurityConfig.java
-│
-├── controller/
-│   ├── AuthController.java
-│   ├── CustomerController.java
-│   ├── DriverController.java
-│   ├── FuelLogController.java
-│   ├── InvoiceController.java
-│   ├── MaintenanceController.java
-│   ├── ShipmentController.java
-│   ├── TripController.java
-│   ├── UserController.java
-│   └── VehicleController.java
-│
-├── dto/
-│   ├── Request/
-│   │   ├── CreateCustomerRequest.java
-│   │   ├── CreateDriverRequest.java
-│   │   ├── CreateFuelLogRequest.java
-│   │   ├── CreateInvoiceRequest.java
-│   │   ├── CreateMaintenanceRequest.java
-│   │   ├── CreateShipmentRequest.java
-│   │   ├── CreateTripRequest.java
-│   │   ├── CreateVehicleRequest.java
-│   │   ├── LoginRequest.java
-│   │   ├── RegisterRequest.java
-│   │   └── UpdateDriverRequest.java
-│   │
-│   └── Response/
-│       ├── AuthResponse.java
-│       ├── CustomerResponse.java
-│       ├── DriverIdsResponse.java
-│       ├── DriverResponse.java
-│       ├── FuelLogResponse.java
-│       ├── InvoiceResponse.java
-│       ├── MaintenanceResponse.java
-│       ├── ShipmentResponse.java
-│       ├── TripResponse.java
-│       ├── UserResponse.java
-│       └── VehicleResponse.java
-│
-├── entity/
-│   ├── Customer.java
-│   ├── Driver.java
-│   ├── FuelLog.java
-│   ├── Invoice.java
-│   ├── Maintenance.java
-│   ├── Shipment.java
-│   ├── Trip.java
-│   ├── User.java
-│   └── Vehicle.java
-│
-├── enums/
-│   ├── DriverStatus.java
-│   ├── FuelType.java
-│   ├── PaymentStatus.java
-│   ├── Role.java
-│   ├── ShipmentPriority.java
-│   ├── ShipmentStatus.java
-│   ├── TripStatus.java
-│   ├── VehicleStatus.java
-│   └── VehicleType.java
-│
-├── exception/
-│   ├── ErrorResponse.java
-│   ├── GlobalExceptionHandler.java
-│   └── NotFoundException.java
-│
-├── repository/
-│   ├── CustomerRepository.java
-│   ├── DriverRepository.java
-│   ├── FuelLogRepository.java
-│   ├── InvoiceRepository.java
-│   ├── MaintenanceRepository.java
-│   ├── ShipmentRepository.java
-│   ├── TripRepository.java
-│   ├── UserRepository.java
-│   └── VehicleRepository.java
-│
-├── security/
-│   ├── CustomUserDetails.java
-│   ├── JwtFilter.java
-│   └── JwtUtil.java
-│
-├── service/
-│   ├── AuthService.java
-│   ├── CustomerService.java
-│   ├── DriverService.java
-|   ├── EmailService.java
-│   ├── FuelLogService.java
-│   ├── InvoiceService.java
-│   ├── MaintenanceService.java
-│   ├── ShipmentService.java
-│   ├── TripService.java
-│   ├── UserService.java
-│   └── VehicleService.java
-│
-├── serviceImpl/
-│   ├── AuthServiceImpl.java
-│   ├── CustomerServiceImpl.java
-│   ├── DriverServiceImpl.java
-|   ├── EmailServiceImpl.java
-│   ├── FuelLogServiceImpl.java
-│   ├── InvoiceServiceImpl.java
-│   ├── MaintenanceServiceImpl.java
-│   ├── ShipmentServiceImpl.java
-│   ├── TripServiceImpl.java
-│   ├── UserServiceImpl.java
-│   └── VehicleServiceImpl.java
-│
-└── RestApplication.java
-
+ Client / Operations Dashboard (React 18 + Vite)
+                      │
+                      ▼
+        ┌───────────────────────────┐
+        │   JWT Auth & RBAC Filter  │ ──(Unauthorized)──► HTTP 401 / 403 Forbidden
+        └───────────────────────────┘
+                      │ (Authenticated Principal)
+                      ▼
+        ┌───────────────────────────┐
+        │   REST Controller Layer   │ ──► Swagger / OpenAPI 3.0 Doc Spec
+        └───────────────────────────┘
+                      │
+                      ▼
+ ┌────────────────────────────────────────────────────────┐
+ │            SPRING BOOT 3 SERVICE ORCHESTRATION         │
+ │                                                        │
+ │  1. Shipment Lifecycle Engine (PENDING -> DELIVERED)   │
+ │  2. Fleet Allocation & Driver Capacity Validator       │
+ │  3. Trip Dispatch & Milestone Tracking                 │
+ │  4. Automated Invoice Generation on Fulfillment        │
+ │  5. Fuel Economy & Telematics Ledger Calculation       │
+ └────────────────────────────────────────────────────────┘
+         │                                       │
+         ▼                                       ▼
+ ┌───────────────────────┐             ┌───────────────────────┐
+ │   MySQL Persistence   │             │   Resend Mail Gateway │
+ │ (Hibernate/JPA ACID)  │             │ (Trip & Billing Notif)│
+ └───────────────────────┘             └───────────────────────┘
 ```
 
 ---
 
-# User Roles
+## System Design & Core Modules
 
-## Role-based access control
+### 1. Dispatch Orchestration & Trip State Machine
+* **Deterministic Trip Transitions**: Enforces a strict status flow (`PENDING` -> `ASSIGNED` -> `IN_TRANSIT` -> `DELIVERED` -> `COMPLETED`).
+* **Resource Conflict Avoidance**: Validates driver readiness, vehicle operational status, and active load assignments before confirming dispatch schedules.
+* **Shipment Manifest Tracking**: Consolidates multi-package consignments against destination waybills and recipient records.
 
-JWT authentication is enforced on all routes via `JwtFilter`.
-Roles are assigned at registration and embedded in the token.
+### 2. Fleet Telematics & Preventative Maintenance
+* **Odometer & Usage Tracking**: Logs vehicle operating metrics to schedule preventative maintenance before mechanical faults cause dispatch downtime.
+* **Fuel Consumption Ledger**: Tracks every fuel log entry (liters, cost per unit, fueling station, driver identity) against trip mileage to calculate operational costs per kilometer.
+* **Fleet Availability Register**: Flags inactive or servicing vehicles to prevent double-booking during dispatch waves.
 
-### Roles
+### 3. Automated Invoicing & Billing Lifecycle
+* **Automated Invoice Trigger**: Delivery confirmation automatically triggers invoice generation containing freight charges, taxes, and customer bill-to details.
+* **Payment Settlement Tracking**: Maintains payment statuses (`UNPAID`, `PARTIALLY_PAID`, `PAID`) linked directly to the originating shipment identifier.
 
-| Role       | Description                                                   |
-|------------|---------------------------------------------------------------|
-| ADMIN      | Full user management access                                   |
-| DISPATCHER | Manages customers, drivers, trips, vehicles, invoices, and shipments |
-| DRIVER     | Logs fuel usage and maintenance records                       |
+### 4. Role-Based Access Control & JWT Security
+* **Stateless Security**: Intercepts requests via Spring Security filters, verifying HMAC-signed JWT tokens and claims.
+* **Least-Privilege Authorization**: Segregates operational endpoints so drivers, dispatchers, and financial auditors access only their required resources.
 
-### Endpoint permissions
-
-| Endpoint prefix       | Allowed role              |
-|-----------------------|---------------------------|
-| /api/auth/**          | Public (no auth required) |
-| /api/user/**          | ADMIN                     |
-| /api/customer/**      | DISPATCHER                |
-| /api/driver/**        | DISPATCHER                |
-| /api/invoice/**       | DISPATCHER                |
-| /api/vehicle/**       | DISPATCHER                |
-| /api/trip/**          | DISPATCHER                |
-| /api/shipment/**      | DISPATCHER                |
-| /api/fuelLog/**       | DRIVER                    |
-| /api/maintenance/**   | DRIVER                    |
-| Any other request     | Authenticated (any role)  |
-
-### Authentication flow
-
-1. Client calls `POST /api/auth/login` with credentials
-2. Server validates and returns a signed JWT
-3. Client includes the token in all subsequent requests:
-   `Authorization: Bearer <token>`
-4. `JwtFilter` intercepts each request, validates the token,
-   and populates the `SecurityContext` with the user's role
-5. Spring Security enforces role checks via `hasRole()`
-
-### Notes
-
-- CSRF is disabled (stateless JWT — no session cookies)
-- Swagger UI is publicly accessible at `/v3/api/**` and `/swagger-ui/index.html`
-- Passwords are hashed using `PasswordConfig` (BCrypt)
----
-
-# Application Architecture
-
-```
-Client
-   │
-   ▼
-Controllers
-   │
-   ▼
-Services
-   │
-   ▼
-Repositories
-   │
-   ▼
-MySQL Database
-
-             │
-             ▼
-      Email Service (Resend)
-
-             │
-             ▼
-        Customer Email
-```
-
-# Business Workflow
-
-## 1. User Registration
-
-```
-POST /api/auth/register
-```
-
-Creates a new user with one of the available roles.
+### 5. Resilient Event Notifications & Alerts
+* **Transactional Dispatch Updates**: Emits asynchronous customer notifications via Resend API on key milestones (shipment created, driver dispatched, proof of delivery signed).
+* **Payment Acknowledgement**: Automatically transmits formatted receipts upon invoice settlement.
 
 ---
 
-## 2. User Authentication
+## Technology Stack
 
-```
-POST /api/auth/login
-```
-
-Returns a JWT token for accessing secured endpoints.
-
----
-
-## 3. Customer Creation
-
-```
-POST /api/customer
-```
-
-Stores customer information used for shipment processing.
+| Layer | Technologies |
+| :--- | :--- |
+| Backend Services | Java 21, Spring Boot 3.x, Spring MVC, Maven |
+| Security | Spring Security 6, Stateless JWT Authentication, BCrypt |
+| Database & ORM | MySQL 8.x, Hibernate, Spring Data JPA |
+| Operations Dashboard | React 18, TypeScript, Vite, Tailwind CSS |
+| API Documentation | Swagger UI, OpenAPI 3.0 |
+| Notification Service | Resend API Integration |
+| Logging & Monitoring | SLF4J, Logback Structured Logging |
+| Containerization | Docker, Docker Compose |
 
 ---
 
-## 4. Driver Creation
+## Quickstart Guide
 
-```
-POST /api/driver
+### 1. Prerequisites
+* **Java Development Kit (JDK) 21**
+* **MySQL 8.x** running locally or via Docker
+* **Node.js 18+** and **npm**
+* **Apache Maven 3.9+**
+
+### 2. Environment Configuration
+Configure your database and mail credentials in `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/routesphere_db?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+
+jwt.secret=your_secure_256_bit_secret_key_here
+jwt.expiration=86400000
+
+resend.api.key=your_resend_api_key
 ```
 
-Default Status
+### 3. Running Backend Services
 
+```bash
+# Clone the repository
+git clone https://github.com/abhiramaab/RouteSphere.git
+cd RouteSphere
+
+# Build and run with Maven
+./mvnw clean spring-boot:run
 ```
-AVAILABLE
+
+The Spring Boot backend will start on `http://localhost:8080`.
+Access Swagger API documentation at: `http://localhost:8080/swagger-ui/index.html`.
+
+### 4. Running Frontend Dashboard
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
+
+The frontend dashboard will be available at `http://localhost:5173`.
+Live interactive instance: **[routesphere.abhiram.tech](https://routesphere.abhiram.tech)**
 
 ---
 
-## 5. Vehicle Creation
+## API Reference
 
-```
-POST /api/vehicle
-```
+### Authentication
+* `POST /api/auth/register` - Register new user account
+* `POST /api/auth/login` - Authenticate credentials and obtain JWT bearer token
 
-Default Status
+### Shipment & Dispatch Management
+* `POST /api/shipments` - Create a new shipment manifest
+* `GET /api/shipments` - List all shipments with status and origin/destination filters
+* `GET /api/shipments/{id}` - Fetch shipment details and consignment items
+* `PUT /api/shipments/{id}` - Update shipment milestones and state
 
-```
-AVAILABLE
-```
+### Fleet & Telematics
+* `POST /api/vehicles` - Register vehicle asset (make, model, license, capacity)
+* `GET /api/vehicles` - Retrieve fleet inventory and operational availability
+* `POST /api/drivers` - Register certified driver profile
+* `POST /api/fuel-logs` - Record fuel expenditure and odometer reading
+* `POST /api/maintenance` - Schedule or record maintenance servicing
 
----
-
-## 6. Shipment Creation
-
-```
-POST /api/shipment
-```
-
-Each shipment is associated with a customer.
-
----
-
-## 7. Invoice Creation
-
-```
-POST /api/invoice
-```
-
-Each invoice is associated with a shipment.
+### Billing & Invoicing
+* `POST /api/invoices` - Generate customer invoice for shipment
+* `GET /api/invoices/{id}` - Fetch invoice billing status and total freight breakdown
+* `PUT /api/invoices/{id}/pay` - Record settlement transaction
 
 ---
 
-## 8. Trip Creation
+## Project Directory Layout
 
-```
-POST /api/trip
-```
-
-During trip creation the system:
-
-* Selects the first available driver
-* Selects the first available vehicle
-* Assigns both to the trip
-* Updates driver status to `ON_TRIP`
-* Updates vehicle status to `IN_TRANSIT`
-* Associates the trip with the selected shipment
-
----
-
-## 9. Fuel Log Creation
-
-```
-POST /api/fuelLog
-```
-
-Using the shipment reference, the system retrieves:
-
-* Trip
-* Driver
-* Vehicle
-* Customer
-
-and stores the corresponding fuel log.
-
----
-
-## 10. Maintenance Management
-
-```
-POST /api/maintenance
-```
-
-Maintenance records are stored against vehicles for service history tracking.
-
----
-
-# Entity Relationships
-
-```
-Customer
-    │
-    └── One Customer → Many Shipments
-
-Shipment
-    │
-    ├── One Shipment → One Invoice
-    └── One Shipment → One Trip
-
-Trip
-    │
-    ├── Many Trips → One Driver
-    ├── Many Trips → One Vehicle
-    └── One Trip → Many Fuel Logs
-
-Vehicle
-    │
-    └── Many Vehicles → One Maintenance Record
-```
-## Email Notifications
-
-The application automatically sends transactional emails using the Resend Email API.
-
-### Shipment Created
-
-When a shipment is created:
-
-- Shipment details are saved
-- Customer email is retrieved
-- Shipment confirmation email is sent
-
-### Shipment Delivered
-
-When a shipment is marked as delivered:
-
-- Customer receives a delivery confirmation email
-
-### Payment Successful
-
-When an invoice payment is completed:
-
-- Customer receives a payment confirmation email
-
----
-
-# REST Endpoints
-
-## Authentication
-
-```
-POST   /api/auth/register
-POST   /api/auth/login
-```
-
-## Customer
-
-```
-POST    /api/customer
-GET     /api/customer/{id}
-GET     /api/customer
-PUT     /api/customer/{id}
-DELETE  /api/customer/{id}
-```
-
-## Driver
-
-```
-POST    /api/driver
-GET     /api/driver/{id}
-GET     /api/driver
-PUT     /api/driver/{id}
-DELETE  /api/driver/{id}
-```
-
-## Vehicle
-
-```
-POST    /api/vehicle
-GET     /api/vehicle/{id}
-GET     /api/vehicle
-PUT     /api/vehicle/{id}
-DELETE  /api/vehicle/{id}
-```
-
-## Shipment
-
-```
-POST    /api/shipment
-GET     /api/shipment/{id}
-GET     /api/shipment
-PUT     /api/shipment/{id}
-DELETE  /api/shipment/{id}
-```
-
-## Trip
-
-```
-POST    /api/trip
-GET     /api/trip/{id}
-GET     /api/trip
-PUT     /api/trip/{id}
-DELETE  /api/trip/{id}
-```
-
-## Invoice
-
-```
-POST    /api/invoice
-GET     /api/invoice/{id}
-GET     /api/invoice
-PUT     /api/invoice/{id}
-DELETE  /api/invoice/{id}
-```
-
-## Fuel Log
-
-```
-POST    /api/fuelLog
-GET     /api/fuelLog/{id}
-GET     /api/fuelLog
-PUT     /api/fuelLog/{id}
-DELETE  /api/fuelLog/{id}
-```
-
-## Maintenance
-
-```
-POST    /api/maintenance
-GET     /api/maintenance/{vehicleId}
-GET     /api/maintenance
-PUT     /api/maintenance/{id}
-DELETE  /api/maintenance/{id}
+```text
+RouteSphere/
+├── assets/                          # Dual-mode logos and architecture assets
+│   ├── routesphere-logo-dark.svg
+│   └── routesphere-logo-light.svg
+├── frontend/                        # React 18 & Vite Operations Console
+│   ├── src/                         # Dashboard views, state hooks, components
+│   └── package.json
+├── src/main/java/com/RouteSphere/REST/
+│   ├── config/                      # Security, OpenAPI, and Resend configs
+│   ├── controller/                  # REST controllers (Auth, Shipments, Fleet)
+│   ├── dto/                         # Request and Response payload contracts
+│   ├── entity/                      # JPA Entities (Shipment, Vehicle, Trip, Invoice)
+│   ├── exception/                   # Global exception handling & error models
+│   ├── repository/                  # Spring Data JPA repositories
+│   └── service/                     # Dispatch orchestration & domain logic
+├── pom.xml                          # Maven build dependencies
+└── Dockerfile                       # Container deployment definition
 ```
 
 ---
 
-# Status Definitions
-
-## Driver Status
-
-```
-AVAILABLE
-ON_TRIP
-OFF_DUTY
-INACTIVE
-```
-
-## Vehicle Status
-
-```
-AVAILABLE
-IN_TRANSIT
-UNDER_MAINTENANCE
-OUT_OF_SERVICE
-```
-
-## Trip Status
-
-```
-SCHEDULED
-STARTED
-COMPLETED
-CANCELLED
-```
-
-## Shipment Priority
-
-```
-LOW
-MEDIUM
-HIGH
-URGENT
-```
-
-## Payment Status
-
-```
-PENDING
-PAID
-FAILED
-```
-
----
-
-# Security
-
-- JWT Authentication
-- BCrypt Password Encoding
-- Stateless Session Management
-- Role-Based Authorization
-- Request Validation
-- Global Exception Handling
-- Swagger/OpenAPI Documentation
-
----
-
-# Logging
-
-The application uses SLF4J with Logback for centralized logging.
-
-Logs include:
-
-- User authentication
-- Customer operations
-- Driver operations
-- Vehicle operations
-- Shipment lifecycle
-- Invoice processing
-- Fuel log operations
-- Maintenance records
-- Email delivery status
-
----
-
-# Future Scope
-
-- Driver availability scheduling
-- Live shipment tracking
-- GPS integration
-- Route optimization
-- Dashboard analytics
-- Audit logging
-- Kubernetes deployment
-- AWS cloud deployment
-- Redis caching
-- RabbitMQ / Kafka messaging
-- SMS integration
-- Push notifications
-
----
-
-
+<p align="center">
+  Built by <a href="https://github.com/abhiramaab">Abhirama</a> · Live at <a href="https://portfolio.abhiram.tech">portfolio.abhiram.tech</a>
+</p>

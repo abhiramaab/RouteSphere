@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" fill="none">
+  <!-- Truck Icon -->
+  <g transform="translate(4, 8)">
+    <rect width="48" height="48" rx="10" fill="#2563EB" fill-opacity="0.15" stroke="#3B82F6" stroke-width="1.5" />
+    <path d="M14 31h8V17H6v14h4" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M30 31h4v-5.5a4 4 0 0 0-1.17-2.83L29 19h-7v12h4" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="14" cy="32" r="3" stroke="#60A5FA" stroke-width="2" fill="#0F172A" />
+    <circle cx="28" cy="32" r="3" stroke="#60A5FA" stroke-width="2" fill="#0F172A" />
+  </g>
+  <!-- Wordmark -->
+  <text x="66" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="26" fill="#F8FAFC" letter-spacing="-0.5">Route<tspan fill="#3B82F6">Sphere</tspan></text>
+  <text x="67" y="51" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="500" font-size="10" fill="#94A3B8" letter-spacing="1.5">FLEET &amp; LOGISTICS ENGINE</text>
+</svg>
