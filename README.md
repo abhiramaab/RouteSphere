@@ -250,8 +250,4 @@ RouteSphere/
 └── Dockerfile                       # Container deployment definition
 ```
 
----
 
-<p align="center">
-  Built by <a href="https://github.com/abhiramaab">Abhirama</a> · Live at <a href="https://portfolio.abhiram.tech">portfolio.abhiram.tech</a>
-</p>
